@@ -1,6 +1,11 @@
 # health-data-repository
 AberFitness Health Data Repository Service
 
+| Branch | Status |
+|-|-|
+| Development | [![Development Build Status](https://travis-ci.org/sem5640-2018/health-data-repository.svg?branch=development)](https://travis-ci.org/sem5640-2018/health-data-repository) |
+| Release | [![Release Build Status](https://travis-ci.org/sem5640-2018/health-data-repository.svg?branch=master)](https://travis-ci.org/sem5640-2018/health-data-repository) |
+
 # Maintained by
 * Adam
 * Dan
