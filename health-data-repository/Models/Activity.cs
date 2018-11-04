@@ -18,15 +18,12 @@ namespace health_data_repository.Models
         public virtual string UserId { get; set; }
 
         [Required]
-        public virtual DateTime DateTime { get; set; }
+        public virtual DateTime StartTimestamp { get; set; }
 
         [Required]
         public virtual string DataSource { get; set; }
+        public virtual DateTime EndTimestamp { get; set; }
 
-        /**
-         *  Duration of the activity in seconds 
-        */
-        public virtual int Duration { get; set; }
 
         public virtual string ActivityType { get; set; }
 
