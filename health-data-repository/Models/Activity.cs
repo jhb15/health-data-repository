@@ -14,10 +14,6 @@ namespace health_data_repository.Models
     */
     public class Activity
     {
-
-        [Required]
-        public virtual string ActivityId { get; set; }
-
         [Required]
         public virtual string UserId { get; set; }
 
