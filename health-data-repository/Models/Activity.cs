@@ -21,11 +21,13 @@ namespace health_data_repository.Models
         public virtual DateTime StartTimestamp { get; set; }
 
         [Required]
-        public virtual string DataSource { get; set; }
         public virtual DateTime EndTimestamp { get; set; }
 
+        [Required]
+        public virtual DataSource Source { get; set; }
 
-        public virtual string ActivityType { get; set; }
+        [Required]
+        public virtual ActivityType ActivityType { get; set; }
 
         public virtual int CaloriesBurnt { get; set; }
 
