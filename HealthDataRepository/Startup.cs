@@ -47,6 +47,9 @@ namespace HealthDataRepository
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+
+            UpdateDatabase(app);
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -68,6 +71,20 @@ namespace HealthDataRepository
 
             app.UseHttpsRedirection();
             app.UseMvc();
+        }
+
+
+        private static void UpdateDatabase(IApplicationBuilder app)
+        {
+            using (var serviceScope = app.ApplicationServices
+                .GetRequiredService<IServiceScopeFactory>()
+                .CreateScope())
+            {
+                using (var context = serviceScope.ServiceProvider.GetService<HealthDataRepositoryContext>())
+                {
+                    context.Database.Migrate();
+                }
+            }
         }
     }
 }
