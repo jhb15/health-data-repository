@@ -10,6 +10,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using health_data_repository.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace health_data_repository
 {
@@ -26,6 +28,12 @@ namespace health_data_repository
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
+
+            var dbConnectionString = Configuration.GetConnectionString("HealthDataRepositoryContextConnection");
+
+            services.AddDbContext<HealthDataRepositoryContext>(options =>
+                options.UseMySql(dbConnectionString));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

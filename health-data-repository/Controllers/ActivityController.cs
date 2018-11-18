@@ -22,7 +22,17 @@ namespace health_data_repository.Controllers
         [HttpGet("{id}", Name = "Get")]
         public string Get(int id)
         {
-            return "value";
+
+            if (!ModelState.IsValid){
+                return BadRequest(ModelState);
+            }
+
+            var activity = await _context.Activity.FindAsync(id);
+            if (activity == null){
+                return NotFound();
+            }
+
+            return Ok(activity);
         }
 
         // POST: api/Activity
