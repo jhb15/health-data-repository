@@ -20,8 +20,12 @@ namespace HealthDataRepository
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+
+        private readonly IHostingEnvironment environment;
+
+        public Startup(IConfiguration configuration, IHostingEnvironment environment)
         {
+            this.environment = environment;
             Configuration = configuration;
         }
 
@@ -35,10 +39,17 @@ namespace HealthDataRepository
             services.AddDbContext<HealthDataRepositoryContext>(options =>
                     options.UseMySql(Configuration.GetConnectionString("HealthDataRepositoryContext")));
 
-            services.Configure<ForwardedHeadersOptions>(options =>
+            if (!environment.IsDevelopment())
             {
-                options.KnownProxies.Add(Dns.GetHostEntry("http://nginx").AddressList[0]);
-            });
+                services.Configure<ForwardedHeadersOptions>(options =>
+                {
+                    var proxyAddresses = Dns.GetHostAddresses("http://nginx");
+                    foreach (var ip in proxyAddresses)
+                    {
+                        options.KnownProxies.Add(ip);
+                    }
+                });
+            }
 
 
 
