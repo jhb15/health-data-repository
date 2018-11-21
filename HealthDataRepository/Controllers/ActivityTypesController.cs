@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace HealthDataRepository.Controllers
 {
-    [Authorize]
+    [Authorize(AuthenticationSchemes = "oidc", Policy = "Administrator")]
     public class ActivityTypesController : Controller
     {
         private readonly HealthDataRepositoryContext _context;

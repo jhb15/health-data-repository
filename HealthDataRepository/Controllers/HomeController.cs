@@ -10,9 +10,15 @@ namespace HealthDataRepository.Controllers
     
     public class HomeController : Controller
     {
-        [Authorize]
+        [Authorize(AuthenticationSchemes = "oidc")]
         public IActionResult Index()
         {
+
+            foreach (var claim in User.Claims)
+            {
+                Console.WriteLine(claim);
+            }
+
             return View();
         }
     }
