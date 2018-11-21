@@ -15,6 +15,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
 using System.Net;
+using System.IdentityModel.Tokens.Jwt;
+using Microsoft.AspNetCore.Authentication;
 
 namespace HealthDataRepository
 {
@@ -51,7 +53,29 @@ namespace HealthDataRepository
                 });
             }
 
+            var appConfiguration = Configuration.GetSection("HealthData");
+            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
+            services.AddAuthentication(options =>
+            {
+                options.DefaultScheme = "Cookies";
+                options.DefaultChallengeScheme = "oidc";
+            })
+            .AddCookie("Cookies")
+            .AddOpenIdConnect("oidc", options =>
+            {
+                options.SignInScheme = "Cookies";
+                options.Authority = appConfiguration.GetValue<string>("GatekeeperUrl");
+                options.ClientId = appConfiguration.GetValue<string>("ClientId");
+                options.ClientSecret = appConfiguration.GetValue<string>("ClientSecret");
+                options.ResponseType = "code id_token";
+                options.SaveTokens = true;
+                options.GetClaimsFromUserInfoEndpoint = true;
+                options.Scope.Add("profile");
+                options.Scope.Add("offline_access");
+                options.ClaimActions.MapJsonKey("locale", "locale");
+                options.ClaimActions.MapJsonKey("user_type", "user_type");
+            });
 
         }
 
@@ -82,6 +106,8 @@ namespace HealthDataRepository
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+            app.UseCookiePolicy();
+            app.UseAuthentication();
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
