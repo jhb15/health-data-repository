@@ -81,6 +81,7 @@ namespace HealthDataRepository
             }
 
             app.UseHttpsRedirection();
+            app.UseStaticFiles();
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
