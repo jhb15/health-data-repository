@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace HealthDataRepository.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/activity")]
     [Authorize(AuthenticationSchemes = "token")]
     [ApiController]
     public class ActivitiesController : ControllerBase
@@ -22,14 +22,7 @@ namespace HealthDataRepository.Controllers
             _context = context;
         }
 
-        // GET: api/Activities
-        [HttpGet]
-        public IEnumerable<Activity> GetActivity()
-        {
-            return _context.Activity;
-        }
-
-        // GET: api/Activities/5
+        // GET: api/activity/5
         [HttpGet("{id}")]
         public async Task<IActionResult> GetActivity([FromRoute] int id)
         {
@@ -48,7 +41,7 @@ namespace HealthDataRepository.Controllers
             return Ok(activity);
         }
 
-        // PUT: api/Activities/5
+        // PUT: api/activity/5
         [HttpPut("{id}")]
         public async Task<IActionResult> PutActivity([FromRoute] int id, [FromBody] Activity activity)
         {
@@ -83,7 +76,7 @@ namespace HealthDataRepository.Controllers
             return NoContent();
         }
 
-        // POST: api/Activities
+        // POST: api/activity
         [HttpPost]
         public async Task<IActionResult> PostActivity([FromBody] Activity activity)
         {
@@ -98,7 +91,7 @@ namespace HealthDataRepository.Controllers
             return CreatedAtAction("GetActivity", new { id = activity.Id }, activity);
         }
 
-        // DELETE: api/Activities/5
+        // DELETE: api/activity/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteActivity([FromRoute] int id)
         {
