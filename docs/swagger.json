@@ -2,15 +2,15 @@
   "openapi": "3.0.0",
   "info": {
     "description": "Health Data Repository API",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "title": "Health Data Repository"
   },
   "tags": [
-		{
+    {
       "name": "activity",
       "description": "Performs CRUD operations on activity records"
     },
-		{
+    {
       "name": "activity-types",
       "description": "Provides a list of activities configured by an admin, with mappings relevant to ingest services"
     }
@@ -23,103 +23,143 @@
       }
     },
     "schemas": {
-      "new_activity_record": {
+      "activity_record": {
         "properties": {
-          "start_time": {
+          "Id": {
+            "type": "integer",
+            "description": "Activity ID"
+          },
+          "UserID": {
+            "type": "string",
+            "description": "User's Gatekeeper Identifier"
+          },
+          "StartTimestamp": {
             "type": "string",
             "description": "ISO8601 without local timestamp"
           },
-          "activity_type": {
+          "EndTimestamp": {
             "type": "string",
-            "description": "The type of activity"
+            "description": "ISO8601 without local timestamp"
           },
-          "quantity": {
-						"type": "string",
-						"description": "The quantity of something as part of the activity, if relevant (e.g. steps)"
-          },
-          "duration": {
+          "Source": {
             "type": "integer",
-            "description": "The number of microseconds of duration, if relevant"
+            "description": "ID for the Data Source"
           },
-          "distance": {
-            "type": "number",
-            "description": "The distance in metres, if relevant"
+          "ActivityType": {
+            "type": "integer",
+            "description": "ID for the Activity Type"
+          },
+          "CaloriesBurnt": {
+            "type": "integer",
+            "description": "KCals burnt during this activity"
+          },
+          "AverageHeartRate": {
+            "type": "integer",
+            "description": "User's average heart rate throughout this activity"
+          },
+          "StepsTaken": {
+            "type": "integer",
+            "description": "Number of steps taken by the user during this activity, if applicable"
+          },
+          "MetresTravelled": {
+            "type": "float",
+            "description": "Number of metres travelled by the user during this activity, if applicable"
+          },
+          "MetresElevationGained": {
+            "type": "float",
+            "description": "Elevation gained by the user in metres during the activity, if applicable"
+          }
+        }
+      },
+      "new_activity_record": {
+        "properties": {
+          "UserID": {
+            "type": "string",
+            "description": "User's Gatekeeper Identifier"
+          },
+          "StartTimestamp": {
+            "type": "string",
+            "description": "ISO8601 without local timestamp"
+          },
+          "EndTimestamp": {
+            "type": "string",
+            "description": "ISO8601 without local timestamp"
+          },
+          "Source": {
+            "type": "integer",
+            "description": "ID for the Data Source"
+          },
+          "ActivityType": {
+            "type": "integer",
+            "description": "ID for the Activity Type"
+          },
+          "CaloriesBurnt": {
+            "type": "integer",
+            "description": "KCals burnt during this activity"
+          },
+          "AverageHeartRate": {
+            "type": "integer",
+            "description": "User's average heart rate throughout this activity"
+          },
+          "StepsTaken": {
+            "type": "integer",
+            "description": "Number of steps taken by the user during this activity, if applicable"
+          },
+          "MetresTravelled": {
+            "type": "float",
+            "description": "Number of metres travelled by the user during this activity, if applicable"
+          },
+          "MetresElevationGained": {
+            "type": "float",
+            "description": "Elevation gained by the user in metres during the activity, if applicable"
           }
         },
         "required": [
-          "start_time",
-          "activity_type",
+          "UserID",
+          "StartTimestamp",
+          "EndTimestamp",
+          "Source",
+          "ActivityType"
         ]
       },
-			"activity_record": {
-				"properties": {
-					"start_time": {
-						"type": "string",
-						"description": "ISO8601 without local timestamp"
-					},
-					"activity_type": {
-						"type": "string",
-						"description": "The type of activity"
-					},
-					"quantity": {
-						"type": "object",
-						"properties": {
-							"value": {
-								"type": "integer",
-								"description": "The quantity of something as part of the activity, if relevant (e.g. steps)"
-							},
-							"unit": {
-								"type": "string",
-								"description": "The unit for the activity"
-							}
-						}
-					},
-					"duration": {
-						"type": "integer",
-						"description": "The number of microseconds of duration, if relevant"
-					},
-					"distance": {
-						"type": "integer",
-						"description": "The distance in metres, if relevant"
-					},
-				}
-      },
-			"activity_list": {
-				"type": "array",
-				"items": {
-					"type": "object",
-					"properties": {
-						"name": {
-							"type": "string",
-							"description": "ISO8601 without local timestamp"
-						},
-						"quantity_unit": {
-							"type": "string",
-							"description": "The unit for the activity, if it is used"
-						},
-						"uses_duration": {
-							"type": "boolean",
-							"description": "Whether the activity tracks duration"
-						},
-						"uses_distance": {
-							"type": "boolean",
-							"description": "Whether the activity tracks distance"
-						},
-						"fitbit_activity_ids": {
-							"type": "array",
-							"items": {
-								"type": "string",
-								"description": "A FitBit activity ID that should map onto this activity"
-							}
-						}
-					}
-				}
-			}
+      "activity_list": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "ISO8601 without local timestamp"
+            },
+            "quantity_unit": {
+              "type": "string",
+              "description": "The unit for the activity, if it is used"
+            },
+            "uses_duration": {
+              "type": "boolean",
+              "description": "Whether the activity tracks duration"
+            },
+            "uses_distance": {
+              "type": "boolean",
+              "description": "Whether the activity tracks distance"
+            },
+            "fitbit_activity_ids": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "description": "A FitBit activity ID that should map onto this activity"
+              }
+            }
+          }
+        }
+      }
     }
   },
   "security": [
     {
-      "bearerAuth": []
+      "bearerAuth": [
+
+      ]
     }
   ],
   "paths": {
@@ -162,12 +202,12 @@
           }
         }
       },
-			"put": {
-				"tags": [
-					"activity"
-				],
-				"summary": "Updates an existing activity record",
-				"parameters": [
+      "put": {
+        "tags": [
+          "activity"
+        ],
+        "summary": "Updates an existing activity record",
+        "parameters": [
           {
             "in": "path",
             "name": "activityId",
@@ -178,59 +218,59 @@
             "description": "The UUID representing an activity record"
           }
         ],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/new_activity_record"
-							}
-						}
-					}
-				},
-				"responses": {
-					"201": {
-						"description": "Updated"
-					},
-					"401": {
-						"description": "Unauthorised"
-					},
-					"500": {
-						"description": "Server Error"
-					}
-				}
-			},
-			"delete": {
-				"tags": [
-					"activity"
-				],
-				"summary": "Deletes the requested activity record",
-				"parameters": [
-					{
-						"in": "path",
-						"name": "activityId",
-						"required": true,
-						"schema": {
-							"type": "string"
-						},
-						"description": "The UUID representing a activity record"
-					}
-				],
-				"responses": {
-					"204": {
-						"description": "Deleted"
-					},
-					"401": {
-						"description": "Unauthorised"
-					},
-					"404": {
-						"description": "Record not found"
-					},
-					"500": {
-						"description": "Server Error"
-					}
-				}
-			}
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/new_activity_record"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Updated"
+          },
+          "401": {
+            "description": "Unauthorised"
+          },
+          "500": {
+            "description": "Server Error"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "activity"
+        ],
+        "summary": "Deletes the requested activity record",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "activityId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The UUID representing a activity record"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Deleted"
+          },
+          "401": {
+            "description": "Unauthorised"
+          },
+          "404": {
+            "description": "Record not found"
+          },
+          "500": {
+            "description": "Server Error"
+          }
+        }
+      }
     },
     "/api/activity/find/{userId}": {
       "get": {
@@ -319,7 +359,7 @@
         }
       }
     },
-		"/api/activity-types": {
+"/api/activity-types": {
 			"get": {
         "tags": [
           "activity-types"
@@ -346,7 +386,7 @@
             "description": "Server Error"
           }
         }
-      },
-		}
+      }
+    }
   }
 }
