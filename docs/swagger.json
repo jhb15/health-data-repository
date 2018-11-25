@@ -163,7 +163,7 @@
     }
   ],
   "paths": {
-    "/activity/{activityId}": {
+    "/api/activity/{activityId}": {
       "get": {
         "tags": [
           "activity"
@@ -272,7 +272,7 @@
         }
       }
     },
-    "/activity/find/{userId}": {
+    "/api/activity/find/{userId}": {
       "get": {
         "tags": [
           "activity"
@@ -330,7 +330,7 @@
         }
       }
     },
-    "/activity": {
+    "/api/activity": {
       "post": {
         "tags": [
           "activity"
@@ -359,8 +359,8 @@
         }
       }
     },
-    "/activity-types": {
-      "get": {
+"/api/activity-types": {
+			"get": {
         "tags": [
           "activity-types"
         ],
