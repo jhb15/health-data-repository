@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "description": "Health Data Repository API",
-    "version": "1.1.0",
+    "version": "1.1.2",
     "title": "Health Data Repository"
   },
   "tags": [
@@ -133,15 +133,13 @@
             "description": "The name of the activity"
           },
           "Source": {
-            "type": "array",
-            "items": {
+            "properties": {
               "Id": {
                 "type": "integer",
                 "description": "The Data Source's ID"
               },
               "Mappings": {
-                "type": "array",
-                "items": {
+                "properties": {
                   "SourceIdentifier": {
                     "type": "string",
                     "description": "The Data Source's identifier for this activity"
