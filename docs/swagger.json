@@ -62,11 +62,11 @@
             "description": "Number of steps taken by the user during this activity, if applicable"
           },
           "MetresTravelled": {
-            "type": "integer",
+            "type": "float",
             "description": "Number of metres travelled by the user during this activity, if applicable"
           },
           "MetresElevationGained": {
-            "type": "integer",
+            "type": "float",
             "description": "Elevation gained by the user in metres during the activity, if applicable"
           }
         }
@@ -106,11 +106,11 @@
             "description": "Number of steps taken by the user during this activity, if applicable"
           },
           "MetresTravelled": {
-            "type": "integer",
+            "type": "float",
             "description": "Number of metres travelled by the user during this activity, if applicable"
           },
           "MetresElevationGained": {
-            "type": "integer",
+            "type": "float",
             "description": "Elevation gained by the user in metres during the activity, if applicable"
           }
         },
