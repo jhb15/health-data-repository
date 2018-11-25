@@ -123,32 +123,28 @@
         ]
       },
       "activity_type": {
-        "type": "array",
-        "items": {
-          "type": "object",
-          "properties": {
-            "Id": {
-              "type": "integer",
-              "description": "The Activity's internal ID"
-            },
-            "Name": {
-              "type": "string",
-              "description": "The name of the activity"
-            },
-            "Source": {
-              "type": "array",
-              "items": {
-                "Id": {
-                  "type": "integer",
-                  "description": "The Data Source's ID"
-                },
-                "Mappings": {
-                  "type": "array",
-                  "items": {
-                    "SourceIdentifier": {
-                      "type": "string",
-                      "description": "The Data Source's identifier for this activity"
-                    }
+        "properties": {
+          "Id": {
+            "type": "integer",
+            "description": "The Activity's internal ID"
+          },
+          "Name": {
+            "type": "string",
+            "description": "The name of the activity"
+          },
+          "Source": {
+            "type": "array",
+            "items": {
+              "Id": {
+                "type": "integer",
+                "description": "The Data Source's ID"
+              },
+              "Mappings": {
+                "type": "array",
+                "items": {
+                  "SourceIdentifier": {
+                    "type": "string",
+                    "description": "The Data Source's identifier for this activity"
                   }
                 }
               }
