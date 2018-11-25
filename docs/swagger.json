@@ -122,32 +122,35 @@
           "ActivityType"
         ]
       },
-      "activity_list": {
+      "activity_type": {
         "type": "array",
         "items": {
           "type": "object",
           "properties": {
-            "name": {
+            "Id": {
+              "type": "integer",
+              "description": "The Activity's internal ID"
+            },
+            "Name": {
               "type": "string",
-              "description": "ISO8601 without local timestamp"
+              "description": "The name of the activity"
             },
-            "quantity_unit": {
-              "type": "string",
-              "description": "The unit for the activity, if it is used"
-            },
-            "uses_duration": {
-              "type": "boolean",
-              "description": "Whether the activity tracks duration"
-            },
-            "uses_distance": {
-              "type": "boolean",
-              "description": "Whether the activity tracks distance"
-            },
-            "fitbit_activity_ids": {
+            "Source": {
               "type": "array",
               "items": {
-                "type": "string",
-                "description": "A FitBit activity ID that should map onto this activity"
+                "Id": {
+                  "type": "integer",
+                  "description": "The Data Source's ID"
+                },
+                "Mappings": {
+                  "type": "array",
+                  "items": {
+                    "SourceIdentifier": {
+                      "type": "string",
+                      "description": "The Data Source's identifier for this activity"
+                    }
+                  }
+                }
               }
             }
           }
@@ -359,8 +362,8 @@
         }
       }
     },
-"/api/activity-types": {
-			"get": {
+    "/api/activity-types": {
+      "get": {
         "tags": [
           "activity-types"
         ],
@@ -371,7 +374,7 @@
             "content": {
               "content/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/activity_list"
+                  "$ref": "#/components/schemas/activity_type"
                 }
               }
             }
@@ -380,7 +383,7 @@
             "description": "Unauthorised"
           },
           "404": {
-            "description": "activity record not found"
+            "description": "Activity record not found"
           },
           "500": {
             "description": "Server Error"
