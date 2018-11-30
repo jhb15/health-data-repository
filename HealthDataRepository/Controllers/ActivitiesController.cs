@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using HealthDataRepository.Models;
 using Microsoft.AspNetCore.Authorization;
 using HealthDataRepository.Repositories;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace HealthDataRepository.Controllers
 {
@@ -43,15 +44,18 @@ namespace HealthDataRepository.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutActivity([FromRoute] int id, [FromBody] Activity activity)
         {
+            if (id != activity.Id)
+            {
+                ModelState.AddModelError("Id", "Id must match URL parameter.");
+            }
+
+            await ValidateActivity(activity, ModelState);
+
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            if (id != activity.Id)
-            {
-                return BadRequest();
-            }
 
             await activityRepository.UpdateAsync(activity);
 
@@ -62,21 +66,7 @@ namespace HealthDataRepository.Controllers
         [HttpPost]
         public async Task<IActionResult> PostActivity([FromBody] Activity activity)
         {
-            var activityType = await activityTypeRepository.GetByIdAsync(activity.ActivityTypeId);
-            if (activityType == null)
-            {
-                ModelState.AddModelError("ActivityTypeId", "Invalid ID specified.");
-            }
-
-            if (activity.EndTimestamp.CompareTo(activity.StartTimestamp) < 0)
-            {
-                ModelState.AddModelError("EndTimestamp", "Activity must end after it started.");
-            }
-
-            if (!Enum.IsDefined(typeof(DataSource), activity.Source))
-            {
-                ModelState.AddModelError("Source", $"Must be one of {DataSource.Manual.GetValuesAsArrayString()}");
-            }
+            await ValidateActivity(activity, ModelState);
 
             if (!ModelState.IsValid)
             {
@@ -100,6 +90,25 @@ namespace HealthDataRepository.Controllers
 
             await activityRepository.DeleteAsync(activity);
             return Ok(activity);
+        }
+
+        private async Task ValidateActivity(Activity activity, ModelStateDictionary ModelState)
+        {
+            var activityType = await activityTypeRepository.GetByIdAsync(activity.ActivityTypeId);
+            if (activityType == null)
+            {
+                ModelState.AddModelError("ActivityTypeId", "Invalid ID specified.");
+            }
+
+            if (activity.EndTimestamp.CompareTo(activity.StartTimestamp) < 0)
+            {
+                ModelState.AddModelError("EndTimestamp", "Activity must end after it started.");
+            }
+
+            if (!Enum.IsDefined(typeof(DataSource), activity.Source))
+            {
+                ModelState.AddModelError("Source", $"Must be one of {DataSource.Manual.GetValuesAsArrayString()}");
+            }
         }
     }
 }
