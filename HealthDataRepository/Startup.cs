@@ -102,15 +102,13 @@ namespace HealthDataRepository
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-
-            UpdateDatabase(app);
-
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
             else
             {
+                UpdateDatabase(app);
                 app.UsePathBase("/health-data-repository");
                 app.Use((context, next) =>
                 {
