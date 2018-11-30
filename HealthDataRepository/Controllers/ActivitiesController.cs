@@ -27,7 +27,7 @@ namespace HealthDataRepository.Controllers
         }
 
         // GET: api/activity/5
-        [HttpGet("{id}")]
+        [HttpGet("{id:int}")]
         public async Task<IActionResult> GetActivity([FromRoute] int id)
         {
             var activity = await activityRepository.GetByIdAsync(id);
@@ -41,7 +41,7 @@ namespace HealthDataRepository.Controllers
         }
 
         // PUT: api/activity/5
-        [HttpPut("{id}")]
+        [HttpPut("{id:int}")]
         public async Task<IActionResult> PutActivity([FromRoute] int id, [FromBody] Activity activity)
         {
             if (id != activity.Id)
@@ -79,7 +79,7 @@ namespace HealthDataRepository.Controllers
         }
 
         // DELETE: api/activity/5
-        [HttpDelete("{id}")]
+        [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeleteActivity([FromRoute] int id)
         {
             var activity = await activityRepository.GetByIdAsync(id);
