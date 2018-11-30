@@ -80,6 +80,22 @@ namespace HealthDataRepository.Controllers
         [HttpPost]
         public async Task<IActionResult> PostActivity([FromBody] Activity activity)
         {
+            var activityType = await _context.ActivityType.FindAsync(activity.ActivityTypeId);
+            if (activityType == null)
+            {
+                ModelState.AddModelError("ActivityTypeId", "Invalid ID specified.");
+            }
+
+            if (activity.EndTimestamp.CompareTo(activity.StartTimestamp) < 0)
+            {
+                ModelState.AddModelError("EndTimestamp", "Activity must end after it started.");
+            }
+
+            if (!Enum.IsDefined(typeof(DataSource), activity.Source))
+            {
+                ModelState.AddModelError("Source", $"Must be one of [{String.Join(", ", Enum.GetNames(typeof(DataSource)))}]");
+            }
+
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
