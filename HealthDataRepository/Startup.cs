@@ -17,6 +17,7 @@ using Microsoft.AspNetCore.HttpOverrides;
 using System.Net;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.AspNetCore.Authentication;
+using HealthDataRepository.Repositories;
 
 namespace HealthDataRepository
 {
@@ -36,6 +37,9 @@ namespace HealthDataRepository
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddScoped<IActivityRepository, ActivityRepository>();
+            services.AddScoped<IActivityTypeRepository, ActivityTypeRepository>();
+
             services.Configure<CookiePolicyOptions>(options =>
             {
                 // This lambda determines whether user consent for non-essential cookies is needed for a given request.

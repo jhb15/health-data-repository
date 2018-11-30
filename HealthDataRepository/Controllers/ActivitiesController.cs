@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using HealthDataRepository.Models;
 using Microsoft.AspNetCore.Authorization;
+using HealthDataRepository.Repositories;
 
 namespace HealthDataRepository.Controllers
 {
@@ -15,23 +16,20 @@ namespace HealthDataRepository.Controllers
     [ApiController]
     public class ActivitiesController : ControllerBase
     {
-        private readonly HealthDataRepositoryContext _context;
+        private readonly IActivityRepository activityRepository;
+        private readonly IActivityTypeRepository activityTypeRepository;
 
-        public ActivitiesController(HealthDataRepositoryContext context)
+        public ActivitiesController(IActivityRepository activityRepository, IActivityTypeRepository activityTypeRepository)
         {
-            _context = context;
+            this.activityRepository = activityRepository;
+            this.activityTypeRepository = activityTypeRepository;
         }
 
         // GET: api/activity/5
         [HttpGet("{id}")]
         public async Task<IActionResult> GetActivity([FromRoute] int id)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            var activity = await _context.Activity.FindAsync(id);
+            var activity = await activityRepository.GetByIdAsync(id);
 
             if (activity == null)
             {
@@ -55,32 +53,16 @@ namespace HealthDataRepository.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(activity).State = EntityState.Modified;
+            await activityRepository.UpdateAsync(activity);
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ActivityExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
+            return Ok(activity);
         }
 
         // POST: api/activity
         [HttpPost]
         public async Task<IActionResult> PostActivity([FromBody] Activity activity)
         {
-            var activityType = await _context.ActivityType.FindAsync(activity.ActivityTypeId);
+            var activityType = await activityTypeRepository.GetByIdAsync(activity.ActivityTypeId);
             if (activityType == null)
             {
                 ModelState.AddModelError("ActivityTypeId", "Invalid ID specified.");
@@ -101,8 +83,7 @@ namespace HealthDataRepository.Controllers
                 return BadRequest(ModelState);
             }
 
-            _context.Activity.Add(activity);
-            await _context.SaveChangesAsync();
+            activity = await activityRepository.AddAsync(activity);
 
             return CreatedAtAction("GetActivity", new { id = activity.Id }, activity);
         }
@@ -111,26 +92,14 @@ namespace HealthDataRepository.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteActivity([FromRoute] int id)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            var activity = await _context.Activity.FindAsync(id);
+            var activity = await activityRepository.GetByIdAsync(id);
             if (activity == null)
             {
                 return NotFound();
             }
 
-            _context.Activity.Remove(activity);
-            await _context.SaveChangesAsync();
-
+            await activityRepository.DeleteAsync(activity);
             return Ok(activity);
-        }
-
-        private bool ActivityExists(int id)
-        {
-            return _context.Activity.Any(e => e.Id == id);
         }
     }
 }
