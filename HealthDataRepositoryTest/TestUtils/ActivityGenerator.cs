@@ -20,7 +20,7 @@ namespace HealthDataRepositoryTest.TestUtils
             };
         }
 
-        public static IList<Activity> CreateList(int length = 5)
+        public static List<Activity> CreateList(int length = 5)
         {
             List<Activity> list = new List<Activity>();
             for (var i = 0; i < length; i++)
