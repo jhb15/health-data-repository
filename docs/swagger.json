@@ -264,7 +264,7 @@
         }
       }
     },
-    "/api/Activities/find/{userId}": {
+    "/api/Activities/ByUser/{userId}": {
       "get": {
         "tags": [
           "Activity"
