@@ -93,7 +93,7 @@ namespace HealthDataRepository.Controllers
 
             if (!Enum.IsDefined(typeof(DataSource), activity.Source))
             {
-                ModelState.AddModelError("Source", $"Must be one of [{String.Join(", ", Enum.GetNames(typeof(DataSource)))}]");
+                ModelState.AddModelError("Source", $"Must be one of {DataSource.Manual.GetValuesAsArrayString()}");
             }
 
             if (!ModelState.IsValid)
