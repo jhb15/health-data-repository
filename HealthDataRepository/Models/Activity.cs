@@ -39,8 +39,8 @@ namespace HealthDataRepository.Models
 
         public virtual int StepsTaken { get; set; }
 
-        public virtual float MetersTravelled { get; set; }
+        public virtual double MetresTravelled { get; set; }
 
-        public virtual float MetresElevationGained { get; set; }
+        public virtual double MetresElevationGained { get; set; }
     }
 }
