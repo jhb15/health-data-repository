@@ -20,6 +20,7 @@ jobs:
       dotnet: 2.1
       script:
         - dotnet restore
+        - dotnet test HealthDataRepositoryTest/HealthDataRepositoryTest.csproj
     - stage: build_staging
       name: "Build docker staging image"
       sudo: required
