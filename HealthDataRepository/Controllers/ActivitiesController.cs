@@ -7,31 +7,30 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using HealthDataRepository.Models;
 using Microsoft.AspNetCore.Authorization;
+using HealthDataRepository.Repositories;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace HealthDataRepository.Controllers
 {
-    [Route("api/activity")]
+    [Route("api/[Controller]")]
     [Authorize(AuthenticationSchemes = "token")]
     [ApiController]
     public class ActivitiesController : ControllerBase
     {
-        private readonly HealthDataRepositoryContext _context;
+        private readonly IActivityRepository activityRepository;
+        private readonly IActivityTypeRepository activityTypeRepository;
 
-        public ActivitiesController(HealthDataRepositoryContext context)
+        public ActivitiesController(IActivityRepository activityRepository, IActivityTypeRepository activityTypeRepository)
         {
-            _context = context;
+            this.activityRepository = activityRepository;
+            this.activityTypeRepository = activityTypeRepository;
         }
 
-        // GET: api/activity/5
-        [HttpGet("{id}")]
+        // GET: api/Activities/{id}
+        [HttpGet("{id:int}")]
         public async Task<IActionResult> GetActivity([FromRoute] int id)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            var activity = await _context.Activity.FindAsync(id);
+            var activity = await activityRepository.GetByIdAsync(id);
 
             if (activity == null)
             {
@@ -41,80 +40,91 @@ namespace HealthDataRepository.Controllers
             return Ok(activity);
         }
 
-        // PUT: api/activity/5
-        [HttpPut("{id}")]
+        // GET: api/Activities/ByUser/{userId}?from={from}&to={to}
+        [HttpGet("ByUser/{userId}")]
+        public async Task<IActionResult> GetByUserId([FromRoute] string userId, [FromQuery] DateTime from, [FromQuery] DateTime to)
+        {
+            if(from.Year > 1 && to.Year > 1)
+            {
+                var activities = await activityRepository.GetByUserIdAsync(userId, from, to);
+                return Ok(activities);
+            }
+            else
+            {
+                var activities = await activityRepository.GetByUserIdAsync(userId);
+                return Ok(activities);
+            }
+        }
+
+        // PUT: api/Activities/{id}
+        [HttpPut("{id:int}")]
         public async Task<IActionResult> PutActivity([FromRoute] int id, [FromBody] Activity activity)
         {
+            if (id != activity.Id)
+            {
+                ModelState.AddModelError("Id", "Id must match URL parameter.");
+            }
+
+            await ValidateActivity(activity, ModelState);
+
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            if (id != activity.Id)
-            {
-                return BadRequest();
-            }
 
-            _context.Entry(activity).State = EntityState.Modified;
+            await activityRepository.UpdateAsync(activity);
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ActivityExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
+            return Ok(activity);
         }
 
-        // POST: api/activity
+        // POST: api/Activities
         [HttpPost]
         public async Task<IActionResult> PostActivity([FromBody] Activity activity)
         {
+            await ValidateActivity(activity, ModelState);
+
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            _context.Activity.Add(activity);
-            await _context.SaveChangesAsync();
+            activity = await activityRepository.AddAsync(activity);
 
             return CreatedAtAction("GetActivity", new { id = activity.Id }, activity);
         }
 
-        // DELETE: api/activity/5
-        [HttpDelete("{id}")]
+        // DELETE: api/Activities/{id}
+        [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeleteActivity([FromRoute] int id)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            var activity = await _context.Activity.FindAsync(id);
+            var activity = await activityRepository.GetByIdAsync(id);
             if (activity == null)
             {
                 return NotFound();
             }
 
-            _context.Activity.Remove(activity);
-            await _context.SaveChangesAsync();
-
+            await activityRepository.DeleteAsync(activity);
             return Ok(activity);
         }
 
-        private bool ActivityExists(int id)
+        private async Task ValidateActivity(Activity activity, ModelStateDictionary ModelState)
         {
-            return _context.Activity.Any(e => e.Id == id);
+            var activityType = await activityTypeRepository.GetByIdAsync(activity.ActivityTypeId);
+            if (activityType == null)
+            {
+                ModelState.AddModelError("ActivityTypeId", "Invalid ID specified.");
+            }
+
+            if (activity.EndTimestamp < activity.StartTimestamp)
+            {
+                ModelState.AddModelError("EndTimestamp", "Activity must end after it started.");
+            }
+
+            if (!Enum.IsDefined(typeof(DataSource), activity.Source))
+            {
+                ModelState.AddModelError("Source", $"Must be one of {DataSource.Manual.GetValuesAsArrayString()}");
+            }
         }
     }
 }

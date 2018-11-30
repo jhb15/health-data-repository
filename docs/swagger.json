@@ -2,52 +2,61 @@
   "openapi": "3.0.0",
   "info": {
     "description": "Health Data Repository API",
-    "version": "1.1.2",
+    "version": "1.2.0",
     "title": "Health Data Repository"
   },
   "tags": [
     {
-      "name": "activity",
-      "description": "Performs CRUD operations on activity records"
+      "name": "Activity",
+      "description": "Performs CRUD operations on Activity records"
     },
     {
-      "name": "activity-types",
-      "description": "Provides a list of activities configured by an admin, with mappings relevant to ingest services"
+      "name": "ActivityType",
+      "description": "Provides a list of Activity Types configured by an admin, with mappings relevant to ingest services."
+    }
+  ],
+  "servers": [
+    {
+      "url": "https://docker2.aberfitness.biz/health-data-repository/",
+      "description": "Staging instance"
     }
   ],
   "components": {
     "securitySchemes": {
-      "bearerAuth": {
-        "type": "http",
-        "scheme": "bearer"
+      "OAuth2": {
+        "type": "oauth2",
+        "flows": {
+          "clientCredentials": {
+            "tokenUrl": "../gatekeeper/connect/token",
+            "refreshUrl": "../gatekeeper/connect/token",
+            "scopes": "health_data_repository"
+          }
+        }
       }
     },
     "schemas": {
-      "activity_record": {
+      "Activity": {
         "properties": {
-          "Id": {
-            "type": "integer",
-            "description": "Activity ID"
-          },
           "UserID": {
             "type": "string",
-            "description": "User's Gatekeeper Identifier"
+            "format": "uuid",
+            "description": "User's unique ID"
           },
           "StartTimestamp": {
             "type": "string",
-            "description": "ISO8601 without local timestamp"
+            "format": "date-time"
           },
           "EndTimestamp": {
             "type": "string",
-            "description": "ISO8601 without local timestamp"
+            "format": "date-time"
           },
           "Source": {
-            "type": "integer",
-            "description": "ID for the Data Source"
+            "type": "string",
+            "description": "Activity source (\"Manual\" or \"Fitbit\")"
           },
-          "ActivityType": {
+          "ActivityTypeId": {
             "type": "integer",
-            "description": "ID for the Activity Type"
+            "description": "ID for the ActivityType"
           },
           "CaloriesBurnt": {
             "type": "integer",
@@ -62,55 +71,13 @@
             "description": "Number of steps taken by the user during this activity, if applicable"
           },
           "MetresTravelled": {
-            "type": "float",
+            "type": "number",
+            "format": "double",
             "description": "Number of metres travelled by the user during this activity, if applicable"
           },
           "MetresElevationGained": {
-            "type": "float",
-            "description": "Elevation gained by the user in metres during the activity, if applicable"
-          }
-        }
-      },
-      "new_activity_record": {
-        "properties": {
-          "UserID": {
-            "type": "string",
-            "description": "User's Gatekeeper Identifier"
-          },
-          "StartTimestamp": {
-            "type": "string",
-            "description": "ISO8601 without local timestamp"
-          },
-          "EndTimestamp": {
-            "type": "string",
-            "description": "ISO8601 without local timestamp"
-          },
-          "Source": {
-            "type": "integer",
-            "description": "ID for the Data Source"
-          },
-          "ActivityType": {
-            "type": "integer",
-            "description": "ID for the Activity Type"
-          },
-          "CaloriesBurnt": {
-            "type": "integer",
-            "description": "KCals burnt during this activity"
-          },
-          "AverageHeartRate": {
-            "type": "integer",
-            "description": "User's average heart rate throughout this activity"
-          },
-          "StepsTaken": {
-            "type": "integer",
-            "description": "Number of steps taken by the user during this activity, if applicable"
-          },
-          "MetresTravelled": {
-            "type": "float",
-            "description": "Number of metres travelled by the user during this activity, if applicable"
-          },
-          "MetresElevationGained": {
-            "type": "float",
+            "type": "number",
+            "format": "double",
             "description": "Elevation gained by the user in metres during the activity, if applicable"
           }
         },
@@ -119,62 +86,84 @@
           "StartTimestamp",
           "EndTimestamp",
           "Source",
-          "ActivityType"
+          "ActivityTypeId"
         ]
       },
-      "activity_type": {
+      "ActivityWithId": {
+        "properties": {
+          "Id": {
+            "type": "integer"
+          }
+        },
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Activity"
+          }
+        ]
+      },
+      "ActivityType": {
         "properties": {
           "Id": {
             "type": "integer",
-            "description": "The Activity's internal ID"
+            "description": "The ActivityType ID"
           },
           "Name": {
             "type": "string",
             "description": "The name of the activity"
           },
-          "Source": {
-            "properties": {
-              "Id": {
-                "type": "integer",
-                "description": "The Data Source's ID"
-              },
-              "Mappings": {
-                "properties": {
-                  "SourceIdentifier": {
-                    "type": "string",
-                    "description": "The Data Source's identifier for this activity"
-                  }
-                }
-              }
+          "Sources": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ActivityTypeSource"
             }
+          }
+        }
+      },
+      "ActivityTypeSource": {
+        "properties": {
+          "Id": {
+            "type": "integer"
+          },
+          "Source": {
+            "type": "string",
+            "description": "Activity source (\"Manual\" or \"Fitbit\")"
+          },
+          "SourceActivities": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SourceActivity"
+            }
+          }
+        }
+      },
+      "SourceActivity": {
+        "properties": {
+          "Id": {
+            "type": "integer"
+          },
+          "ServiceActivityId": {
+            "type": "string",
+            "description": "The ID of an activity defined by the provider."
           }
         }
       }
     }
   },
-  "security": [
-    {
-      "bearerAuth": [
-
-      ]
-    }
-  ],
   "paths": {
-    "/api/activity/{activityId}": {
+    "/api/Activities/{id}": {
       "get": {
         "tags": [
-          "activity"
+          "Activity"
         ],
-        "summary": "Gets the activity record matching the given activity ID",
+        "summary": "Gets an Activity record",
         "parameters": [
           {
+            "name": "id",
             "in": "path",
-            "name": "activityId",
             "required": true,
             "schema": {
-              "type": "string"
-            },
-            "description": "The UUID representing an activity record"
+              "type": "integer"
+            }
           }
         ],
         "responses": {
@@ -183,7 +172,7 @@
             "content": {
               "content/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/activity_record"
+                  "$ref": "#/components/schemas/ActivityWithId"
                 }
               }
             }
@@ -192,27 +181,23 @@
             "description": "Unauthorised"
           },
           "404": {
-            "description": "activity record not found"
-          },
-          "500": {
-            "description": "Server Error"
+            "description": "Not Found"
           }
         }
       },
       "put": {
         "tags": [
-          "activity"
+          "Activity"
         ],
-        "summary": "Updates an existing activity record",
+        "summary": "Updates an existing Activity record",
         "parameters": [
           {
+            "name": "id",
             "in": "path",
-            "name": "activityId",
             "required": true,
             "schema": {
-              "type": "string"
-            },
-            "description": "The UUID representing an activity record"
+              "type": "integer"
+            }
           }
         ],
         "requestBody": {
@@ -220,59 +205,69 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/new_activity_record"
+                "$ref": "#/components/schemas/ActivityWithId"
               }
             }
           }
         },
         "responses": {
-          "201": {
-            "description": "Updated"
+          "200": {
+            "description": "Updated",
+            "content": {
+              "content/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActivityWithId"
+                }
+              }
+            }
           },
-          "401": {
+          "400": {
+            "description": "Bad Request"
+          },
+          "401'": {
             "description": "Unauthorised"
-          },
-          "500": {
-            "description": "Server Error"
           }
         }
       },
       "delete": {
         "tags": [
-          "activity"
+          "Activity"
         ],
-        "summary": "Deletes the requested activity record",
+        "summary": "Deletes an Activity record",
         "parameters": [
           {
+            "name": "id",
             "in": "path",
-            "name": "activityId",
             "required": true,
             "schema": {
-              "type": "string"
-            },
-            "description": "The UUID representing a activity record"
+              "type": "integer"
+            }
           }
         ],
         "responses": {
-          "204": {
-            "description": "Deleted"
+          "200": {
+            "description": "Deleted",
+            "content": {
+              "content/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActivityWithId"
+                }
+              }
+            }
           },
           "401": {
             "description": "Unauthorised"
           },
           "404": {
-            "description": "Record not found"
-          },
-          "500": {
-            "description": "Server Error"
+            "description": "Not found"
           }
         }
       }
     },
-    "/api/activity/find/{userId}": {
+    "/api/Activities/ByUser/{userId}": {
       "get": {
         "tags": [
-          "activity"
+          "Activity"
         ],
         "parameters": [
           {
@@ -286,19 +281,19 @@
           },
           {
             "in": "query",
-            "name": "fromTime",
+            "name": "from",
             "schema": {
-              "type": "string"
-            },
-            "description": "(Optional) The timestamp (ISO8061) to search from"
+              "type": "string",
+              "format": "date-time"
+            }
           },
           {
             "in": "query",
-            "name": "toTime",
+            "name": "to",
             "schema": {
-              "type": "string"
-            },
-            "description": "(Optional) The timestamp (ISO8061) to search up to"
+              "type": "string",
+              "format": "date-time"
+            }
           }
         ],
         "responses": {
@@ -309,7 +304,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/activity_record"
+                    "$ref": "#/components/schemas/ActivityWithId"
                   }
                 }
               }
@@ -317,70 +312,65 @@
           },
           "401": {
             "description": "Unauthorised"
-          },
-          "404": {
-            "description": "No items based on the requested criteria were found"
-          },
-          "500": {
-            "description": "Server Error"
           }
         }
       }
     },
-    "/api/activity": {
+    "/api/Activities": {
       "post": {
         "tags": [
-          "activity"
+          "Activity"
         ],
-        "summary": "Creates a new activity record",
+        "summary": "Creates a new Activity record",
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/new_activity_record"
+                "$ref": "#/components/schemas/Activity"
               }
             }
           }
         },
         "responses": {
           "201": {
-            "description": "Created"
+            "description": "Created",
+            "content": {
+              "content/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActivityWithId"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
           },
           "401": {
             "description": "Unauthorised"
-          },
-          "500": {
-            "description": "Server Error"
           }
         }
       }
     },
-    "/api/activity-types": {
+    "/api/ActivityTypes": {
       "get": {
         "tags": [
-          "activity-types"
+          "ActivityType"
         ],
-        "summary": "Gets the list of activity types added by administrators",
+        "summary": "Gets the list of ActivityTypes added by administrators",
         "responses": {
           "200": {
             "description": "OK",
             "content": {
               "content/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/activity_type"
+                  "$ref": "#/components/schemas/ActivityType"
                 }
               }
             }
           },
           "401": {
             "description": "Unauthorised"
-          },
-          "404": {
-            "description": "Activity record not found"
-          },
-          "500": {
-            "description": "Server Error"
           }
         }
       }
