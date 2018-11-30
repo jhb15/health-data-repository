@@ -26,7 +26,7 @@ namespace HealthDataRepository.Controllers
             this.activityTypeRepository = activityTypeRepository;
         }
 
-        // GET: api/activity/5
+        // GET: api/Activities/{id}
         [HttpGet("{id:int}")]
         public async Task<IActionResult> GetActivity([FromRoute] int id)
         {
@@ -40,7 +40,23 @@ namespace HealthDataRepository.Controllers
             return Ok(activity);
         }
 
-        // PUT: api/activity/5
+        // GET: api/Activities/ByUser/{userId}?from={from}&to={to}
+        [HttpGet("ByUser/{userId}")]
+        public async Task<IActionResult> GetByUserId([FromRoute] string userId, [FromQuery] DateTime from, [FromQuery] DateTime to)
+        {
+            if(from.Year > 1 && to.Year > 1)
+            {
+                var activities = await activityRepository.GetByUserIdAsync(userId, from, to);
+                return Ok(activities);
+            }
+            else
+            {
+                var activities = await activityRepository.GetByUserIdAsync(userId);
+                return Ok(activities);
+            }
+        }
+
+        // PUT: api/Activities/{id}
         [HttpPut("{id:int}")]
         public async Task<IActionResult> PutActivity([FromRoute] int id, [FromBody] Activity activity)
         {
@@ -62,7 +78,7 @@ namespace HealthDataRepository.Controllers
             return Ok(activity);
         }
 
-        // POST: api/activity
+        // POST: api/Activities
         [HttpPost]
         public async Task<IActionResult> PostActivity([FromBody] Activity activity)
         {
@@ -78,7 +94,7 @@ namespace HealthDataRepository.Controllers
             return CreatedAtAction("GetActivity", new { id = activity.Id }, activity);
         }
 
-        // DELETE: api/activity/5
+        // DELETE: api/Activities/{id}
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeleteActivity([FromRoute] int id)
         {
@@ -100,7 +116,7 @@ namespace HealthDataRepository.Controllers
                 ModelState.AddModelError("ActivityTypeId", "Invalid ID specified.");
             }
 
-            if (activity.EndTimestamp.CompareTo(activity.StartTimestamp) < 0)
+            if (activity.EndTimestamp < activity.StartTimestamp)
             {
                 ModelState.AddModelError("EndTimestamp", "Activity must end after it started.");
             }
