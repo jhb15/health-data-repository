@@ -30,9 +30,9 @@ namespace HealthDataRepository.Migrations
 
                     b.Property<DateTime>("EndTimestamp");
 
-                    b.Property<float>("MetersTravelled");
+                    b.Property<double>("MetresElevationGained");
 
-                    b.Property<float>("MetresElevationGained");
+                    b.Property<double>("MetresTravelled");
 
                     b.Property<int>("Source");
 
@@ -41,7 +41,8 @@ namespace HealthDataRepository.Migrations
                     b.Property<int>("StepsTaken");
 
                     b.Property<string>("UserId")
-                        .IsRequired();
+                        .IsRequired()
+                        .HasMaxLength(36);
 
                     b.HasKey("Id");
 
