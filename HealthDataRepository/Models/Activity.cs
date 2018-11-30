@@ -14,11 +14,11 @@ namespace HealthDataRepository.Models
     */
     public class Activity
     {
-
         [Key]
         public virtual int Id { get; set; }
 
         [Required]
+        [StringLength(maximumLength: 36, MinimumLength = 36)]
         public virtual string UserId { get; set; }
 
         [Required]
@@ -31,8 +31,10 @@ namespace HealthDataRepository.Models
         public virtual DataSource Source { get; set; }
 
         [Required]
-        public virtual ActivityType ActivityType { get; set; }
+        public virtual int ActivityTypeId { get; set; }
 
+        public virtual ActivityType ActivityType { get; set; }
+        
         public virtual int CaloriesBurnt { get; set; }
 
         public virtual int AverageHeartRate { get; set; }
