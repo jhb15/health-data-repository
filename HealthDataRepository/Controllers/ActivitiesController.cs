@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace HealthDataRepository.Controllers
 {
-    [Route("api/activity")]
+    [Route("api/[Controller]")]
     [Authorize(AuthenticationSchemes = "token")]
     [ApiController]
     public class ActivitiesController : ControllerBase
