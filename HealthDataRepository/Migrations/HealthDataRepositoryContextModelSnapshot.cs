@@ -34,7 +34,8 @@ namespace HealthDataRepository.Migrations
 
                     b.Property<double>("MetresTravelled");
 
-                    b.Property<int>("Source");
+                    b.Property<string>("Source")
+                        .IsRequired();
 
                     b.Property<DateTime>("StartTimestamp");
 

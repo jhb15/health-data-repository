@@ -28,7 +28,7 @@ namespace HealthDataRepository.Models
         public virtual DateTime EndTimestamp { get; set; }
 
         [Required]
-        public virtual DataSource Source { get; set; }
+        public virtual string Source { get; set; }
 
         [Required]
         public virtual int ActivityTypeId { get; set; }
