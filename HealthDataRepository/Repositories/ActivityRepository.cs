@@ -35,14 +35,18 @@ namespace HealthDataRepository.Repositories
             return await context.Activity.FindAsync(id);
         }
 
-        public Task<List<Activity>> GetByUserIdAsync(string userId)
+        public async Task<List<Activity>> GetByUserIdAsync(string userId)
         {
-            throw new NotImplementedException();
+            return await context.Activity.Where(e => e.UserId == userId).ToListAsync();
         }
 
-        public Task<List<Activity>> GetByUserIdAsync(string userId, DateTime from, DateTime to)
+        public async Task<List<Activity>> GetByUserIdAsync(string userId, DateTime from, DateTime to)
         {
-            throw new NotImplementedException();
+            return await context.Activity
+                .Where(e => e.UserId == userId)
+                .Where(e => e.StartTimestamp >= from)
+                .Where(e => e.EndTimestamp <= to)
+                .ToListAsync();
         }
 
         public async Task<Activity> UpdateAsync(Activity activity)
