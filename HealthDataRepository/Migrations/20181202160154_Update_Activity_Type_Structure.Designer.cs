@@ -3,14 +3,16 @@ using System;
 using HealthDataRepository.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace HealthDataRepository.Migrations
 {
     [DbContext(typeof(HealthDataRepositoryContext))]
-    partial class HealthDataRepositoryContextModelSnapshot : ModelSnapshot
+    [Migration("20181202160154_Update_Activity_Type_Structure")]
+    partial class Update_Activity_Type_Structure
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
