@@ -6,13 +6,16 @@ using System.Threading.Tasks;
 
 namespace HealthDataRepository.Models
 {
-    public class SourceActivity
+    public class ActivityMapping
     {
         [Key]
         public virtual int Id { get; set; }
 
         [Required]
-        public virtual string ServiceActivityId { get; set; }
+        public virtual DataSource Source { get; set; }
+
+        [Required]
+        public virtual string MappingKey { get; set; }
 
     }
 }

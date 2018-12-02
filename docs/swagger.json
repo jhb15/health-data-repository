@@ -111,15 +111,15 @@
             "type": "string",
             "description": "The name of the activity"
           },
-          "Sources": {
+          "Mappings": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/ActivityTypeSource"
+              "$ref": "#/components/schemas/ActivityMapping"
             }
           }
         }
       },
-      "ActivityTypeSource": {
+      "ActivityMapping": {
         "properties": {
           "Id": {
             "type": "integer"
@@ -128,23 +128,10 @@
             "type": "string",
             "description": "Activity source (\"Manual\" or \"Fitbit\")"
           },
-          "SourceActivities": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/SourceActivity"
-            }
-          }
-        }
-      },
-      "SourceActivity": {
-        "properties": {
-          "Id": {
-            "type": "integer"
-          },
-          "ServiceActivityId": {
+          "MappingKey": {
             "type": "string",
-            "description": "The ID of an activity defined by the provider."
-          }
+            "description": "The identifier used by the Source service to identify this activity"
+          },
         }
       }
     }
