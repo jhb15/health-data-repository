@@ -17,5 +17,7 @@ namespace HealthDataRepository.Models
         public DbSet<HealthDataRepository.Models.Activity> Activity { get; set; }
 
         public DbSet<HealthDataRepository.Models.ActivityType> ActivityType { get; set; }
+
+        public DbSet<HealthDataRepository.Models.ActivityMapping> ActivityMapping { get; set; }
     }
 }

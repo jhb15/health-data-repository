@@ -15,8 +15,7 @@ namespace HealthDataRepository.Models
         [Required]
         public virtual string Name { get; set; }
 
-        [Required]
         [MinLength(1)]
-        public virtual ICollection<ActivityTypeSource> Sources { get; set; }
+        public virtual ICollection<ActivityMapping> Mappings { get; set; }
     }
 }
