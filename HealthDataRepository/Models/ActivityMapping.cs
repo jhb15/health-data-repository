@@ -12,10 +12,13 @@ namespace HealthDataRepository.Models
         public virtual int Id { get; set; }
 
         [Required]
-        public virtual DataSource Source { get; set; }
+        public virtual string Source { get; set; }
 
         [Required]
         public virtual string MappingKey { get; set; }
+
+        [Required]
+        public virtual int ActivityTypeId { get; set; }
 
     }
 }

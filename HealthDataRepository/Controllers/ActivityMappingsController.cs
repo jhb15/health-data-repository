@@ -9,22 +9,22 @@ using HealthDataRepository.Models;
 
 namespace HealthDataRepository.Controllers
 {
-    public class ActivityTypesController : Controller
+    public class ActivityMappingsController : Controller
     {
         private readonly HealthDataRepositoryContext _context;
 
-        public ActivityTypesController(HealthDataRepositoryContext context)
+        public ActivityMappingsController(HealthDataRepositoryContext context)
         {
             _context = context;
         }
 
-        // GET: ActivityTypes
+        // GET: ActivityMappings
         public async Task<IActionResult> Index()
         {
-            return View(await _context.ActivityType.ToListAsync());
+            return View(await _context.ActivityMapping.ToListAsync());
         }
 
-        // GET: ActivityTypes/Details/5
+        // GET: ActivityMappings/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -32,39 +32,41 @@ namespace HealthDataRepository.Controllers
                 return NotFound();
             }
 
-            var activityType = await _context.ActivityType
+            var activityMapping = await _context.ActivityMapping
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (activityType == null)
+            if (activityMapping == null)
             {
                 return NotFound();
             }
 
-            return View(activityType);
+            return View(activityMapping);
         }
 
-        // GET: ActivityTypes/Create
+        // GET: ActivityMappings/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: ActivityTypes/Create
+        // POST: ActivityMappings/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name")] ActivityType activityType)
+        public async Task<IActionResult> Create([Bind("Id,Source,MappingKey,ActivityTypeId")] ActivityMapping activityMapping)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(activityType);
+
+                activityMapping.Source = Enum.GetName(typeof(DataSource), Convert.ToInt32(activityMapping.Source));
+                _context.Add(activityMapping);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(activityType);
+            return View(activityMapping);
         }
 
-        // GET: ActivityTypes/Edit/5
+        // GET: ActivityMappings/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -72,22 +74,22 @@ namespace HealthDataRepository.Controllers
                 return NotFound();
             }
 
-            var activityType = await _context.ActivityType.FindAsync(id);
-            if (activityType == null)
+            var activityMapping = await _context.ActivityMapping.FindAsync(id);
+            if (activityMapping == null)
             {
                 return NotFound();
             }
-            return View(activityType);
+            return View(activityMapping);
         }
 
-        // POST: ActivityTypes/Edit/5
+        // POST: ActivityMappings/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name")] ActivityType activityType)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Source,MappingKey")] ActivityMapping activityMapping)
         {
-            if (id != activityType.Id)
+            if (id != activityMapping.Id)
             {
                 return NotFound();
             }
@@ -96,12 +98,12 @@ namespace HealthDataRepository.Controllers
             {
                 try
                 {
-                    _context.Update(activityType);
+                    _context.Update(activityMapping);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ActivityTypeExists(activityType.Id))
+                    if (!ActivityMappingExists(activityMapping.Id))
                     {
                         return NotFound();
                     }
@@ -112,10 +114,10 @@ namespace HealthDataRepository.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(activityType);
+            return View(activityMapping);
         }
 
-        // GET: ActivityTypes/Delete/5
+        // GET: ActivityMappings/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -123,30 +125,30 @@ namespace HealthDataRepository.Controllers
                 return NotFound();
             }
 
-            var activityType = await _context.ActivityType
+            var activityMapping = await _context.ActivityMapping
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (activityType == null)
+            if (activityMapping == null)
             {
                 return NotFound();
             }
 
-            return View(activityType);
+            return View(activityMapping);
         }
 
-        // POST: ActivityTypes/Delete/5
+        // POST: ActivityMappings/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var activityType = await _context.ActivityType.FindAsync(id);
-            _context.ActivityType.Remove(activityType);
+            var activityMapping = await _context.ActivityMapping.FindAsync(id);
+            _context.ActivityMapping.Remove(activityMapping);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool ActivityTypeExists(int id)
+        private bool ActivityMappingExists(int id)
         {
-            return _context.ActivityType.Any(e => e.Id == id);
+            return _context.ActivityMapping.Any(e => e.Id == id);
         }
     }
 }
