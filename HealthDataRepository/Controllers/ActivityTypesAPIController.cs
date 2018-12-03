@@ -9,7 +9,7 @@ using HealthDataRepository.Models;
 
 namespace HealthDataRepository.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/ActivityTypes")]
     [ApiController]
     public class ActivityTypesAPIController : ControllerBase
     {
@@ -22,9 +22,10 @@ namespace HealthDataRepository.Controllers
 
         // GET: api/ActivityTypes
         [HttpGet]
-        public IEnumerable<ActivityType> GetActivityType()
+        public async Task<IActionResult> GetActivityType()
         {
-            return _context.ActivityType;
+            var activityTypes = await _context.ActivityType.Include("Mappings").ToListAsync();
+            return Ok(activityTypes);
         }
 
         // GET: api/ActivityTypes/5
