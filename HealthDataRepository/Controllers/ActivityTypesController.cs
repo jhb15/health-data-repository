@@ -54,7 +54,7 @@ namespace HealthDataRepository.Controllers
                 return NotFound();
             }
 
-            var activityType = await _context.ActivityType.FindAsync(id);
+            var activityType = await _context.ActivityType.Include("Mappings").SingleOrDefaultAsync(at => at.Id == id);
             if (activityType == null)
             {
                 return NotFound();

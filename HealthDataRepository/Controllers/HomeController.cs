@@ -13,13 +13,7 @@ namespace HealthDataRepository.Controllers
         [Authorize(AuthenticationSchemes = "oidc")]
         public IActionResult Index()
         {
-
-            foreach (var claim in User.Claims)
-            {
-                Console.WriteLine(claim);
-            }
-
-            return View();
+            return RedirectToAction("Index", "ActivityTypes");
         }
     }
 }
