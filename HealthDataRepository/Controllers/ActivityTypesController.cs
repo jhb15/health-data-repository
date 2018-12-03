@@ -24,24 +24,6 @@ namespace HealthDataRepository.Controllers
             return View(await _context.ActivityType.ToListAsync());
         }
 
-        // GET: ActivityTypes/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var activityType = await _context.ActivityType
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (activityType == null)
-            {
-                return NotFound();
-            }
-
-            return View(activityType);
-        }
-
         // GET: ActivityTypes/Create
         public IActionResult Create()
         {
@@ -138,8 +120,11 @@ namespace HealthDataRepository.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var activityType = await _context.ActivityType.FindAsync(id);
+            var activityType = await _context.ActivityType.Include("Mappings").SingleOrDefaultAsync(at => at.Id == id);
+
+            _context.ActivityMapping.RemoveRange(activityType.Mappings);
             _context.ActivityType.Remove(activityType);
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
