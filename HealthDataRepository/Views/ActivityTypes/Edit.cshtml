@@ -2,6 +2,7 @@
 
 @{
     ViewData["Title"] = "Edit";
+    ViewData["ActivityTypeId"] = Model.Id;
 }
 
 <h2>Edit</h2>
@@ -24,6 +25,9 @@
         </form>
     </div>
 </div>
+
+<h1>Create a mapping thing</h1>
+<partial model="new HealthDataRepository.Models.ActivityMapping()" name="/Views/ActivityMappings/_CreateForm.cshtml" view-data="ViewData" />
 
 <div>
     <a asp-action="Index">Back to List</a>
