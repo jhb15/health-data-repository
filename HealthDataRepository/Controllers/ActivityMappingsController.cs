@@ -31,7 +31,7 @@ namespace HealthDataRepository.Controllers
                 activityMapping.Source = Enum.GetName(typeof(DataSource), Convert.ToInt32(activityMapping.Source));
                 _context.Add(activityMapping);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Edit", "ActivityTypes", new { Id = activityMapping.ActivityTypeId });
             }
             return View(activityMapping);
         }
