@@ -121,9 +121,6 @@
       },
       "ActivityMapping": {
         "properties": {
-          "Id": {
-            "type": "integer"
-          },
           "Source": {
             "type": "string",
             "description": "Activity source (\"Manual\" or \"Fitbit\")"
