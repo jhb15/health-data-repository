@@ -7,10 +7,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace HealthDataRepository.Controllers
 {
-    
+    [Authorize(AuthenticationSchemes = "oidc", Policy = "Administrator")]
     public class HomeController : Controller
     {
-        [Authorize(AuthenticationSchemes = "oidc")]
         public IActionResult Index()
         {
             return RedirectToAction("Index", "ActivityTypes");

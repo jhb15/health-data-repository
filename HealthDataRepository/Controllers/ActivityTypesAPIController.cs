@@ -6,11 +6,13 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using HealthDataRepository.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace HealthDataRepository.Controllers
 {
     [Route("api/ActivityTypes")]
     [ApiController]
+    [Authorize(AuthenticationSchemes = "token")]
     public class ActivityTypesAPIController : ControllerBase
     {
         private readonly HealthDataRepositoryContext _context;
