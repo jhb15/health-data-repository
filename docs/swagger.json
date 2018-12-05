@@ -37,56 +37,56 @@
     "schemas": {
       "Activity": {
         "properties": {
-          "UserID": {
+          "userID": {
             "type": "string",
             "format": "uuid",
             "description": "User's unique ID"
           },
-          "StartTimestamp": {
+          "startTimestamp": {
             "type": "string",
             "format": "date-time"
           },
-          "EndTimestamp": {
+          "endTimestamp": {
             "type": "string",
             "format": "date-time"
           },
-          "Source": {
+          "source": {
             "type": "string",
             "description": "Activity source (\"Manual\" or \"Fitbit\")"
           },
-          "ActivityTypeId": {
+          "activityTypeId": {
             "type": "integer",
             "description": "ID for the ActivityType"
           },
-          "CaloriesBurnt": {
+          "caloriesBurnt": {
             "type": "integer",
             "description": "KCals burnt during this activity"
           },
-          "AverageHeartRate": {
+          "averageHeartRate": {
             "type": "integer",
             "description": "User's average heart rate throughout this activity"
           },
-          "StepsTaken": {
+          "stepsTaken": {
             "type": "integer",
             "description": "Number of steps taken by the user during this activity, if applicable"
           },
-          "MetresTravelled": {
+          "metresTravelled": {
             "type": "number",
             "format": "double",
             "description": "Number of metres travelled by the user during this activity, if applicable"
           },
-          "MetresElevationGained": {
+          "metresElevationGained": {
             "type": "number",
             "format": "double",
             "description": "Elevation gained by the user in metres during the activity, if applicable"
           }
         },
         "required": [
-          "UserID",
-          "StartTimestamp",
-          "EndTimestamp",
-          "Source",
-          "ActivityTypeId"
+          "userID",
+          "startTimestamp",
+          "endTimestamp",
+          "source",
+          "activityTypeId"
         ]
       },
       "ActivityWithId": {
@@ -103,15 +103,15 @@
       },
       "ActivityType": {
         "properties": {
-          "Id": {
+          "id": {
             "type": "integer",
             "description": "The ActivityType ID"
           },
-          "Name": {
+          "name": {
             "type": "string",
             "description": "The name of the activity"
           },
-          "Mappings": {
+          "mappings": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/ActivityMapping"
@@ -121,11 +121,11 @@
       },
       "ActivityMapping": {
         "properties": {
-          "Source": {
+          "source": {
             "type": "string",
             "description": "Activity source (\"Manual\" or \"Fitbit\")"
           },
-          "MappingKey": {
+          "mappingKey": {
             "type": "string",
             "description": "The identifier used by the Source service to identify this activity"
           },
