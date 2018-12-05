@@ -134,7 +134,7 @@ namespace HealthDataRepository
             {
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
+                    template: "{controller=ActivityTypes}/{action=Index}/{id?}");
             });
         }
 
