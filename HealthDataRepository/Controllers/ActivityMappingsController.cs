@@ -6,9 +6,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using HealthDataRepository.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace HealthDataRepository.Controllers
 {
+    [Authorize(AuthenticationSchemes = "oidc", Policy = "Administrator")]
     public class ActivityMappingsController : Controller
     {
         private readonly HealthDataRepositoryContext _context;
