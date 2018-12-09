@@ -5,35 +5,47 @@
     ViewData["ActivityTypeId"] = Model.Id;
 }
 
-<h2>Edit Activity Type</h2>
 
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Id" />
-            <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
-    </div>
+<div>
+    <a asp-action="Index" class="btn btn-primary">Back to List</a>
 </div>
 
+<br />
+
+<h3>Edit Activity Type: <strong>@Model.Name</strong></h3>
+
 <hr />
+
+<div class="row">
+    <div class="col-md-12 col-lg-6">
+        <div class="card">
+            <div class="card-body">
+                <form asp-action="Edit">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <input type="hidden" asp-for="Id" />
+                    <div class="form-group">
+                        <label asp-for="Name" class="control-label"></label>
+                        <input asp-for="Name" class="form-control" />
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <input type="submit" value="Save" class="btn btn-primary" />
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 
 <div class="row">
 
     <div class="col-lg-6 col-md-12">
 
-        <div class="panel panel-primary">
-            <div class="panel-heading">Manage Mappings</div>
-            <div class="panel-body">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <strong class="card-title">Manage Mappings</strong>
+            </div>
+            <div class="table-stats order-table ov-h">
                 <table class="table">
                     <thead>
                         <tr>
@@ -68,9 +80,11 @@
     </div>
 
     <div class="col-lg-6 col-md-12">
-        <div class="panel panel-info">
-            <div class="panel-heading">Create New Mapping</div>
-            <div class="panel-body">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <strong class="card-title">Create New Mapping</strong>
+            </div>
+            <div class="card-body">
                 <partial model="new HealthDataRepository.Models.ActivityMapping()" name="/Views/ActivityMappings/_CreateForm.cshtml" view-data="ViewData" />
 
             </div>
@@ -79,9 +93,6 @@
 
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
