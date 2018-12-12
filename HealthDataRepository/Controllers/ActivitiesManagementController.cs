@@ -6,9 +6,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using HealthDataRepository.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace HealthDataRepository.Controllers
 {
+    [Authorize(AuthenticationSchemes = "oidc", Policy = "Administrator")]
     public class ActivitiesManagementController : Controller
     {
         private readonly HealthDataRepositoryContext _context;
@@ -23,49 +25,6 @@ namespace HealthDataRepository.Controllers
         {
             var healthDataRepositoryContext = _context.Activity.Include(a => a.ActivityType);
             return View(await healthDataRepositoryContext.ToListAsync());
-        }
-
-        // GET: ActivitiesManagement/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var activity = await _context.Activity
-                .Include(a => a.ActivityType)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (activity == null)
-            {
-                return NotFound();
-            }
-
-            return View(activity);
-        }
-
-        // GET: ActivitiesManagement/Create
-        public IActionResult Create()
-        {
-            ViewData["ActivityTypeId"] = new SelectList(_context.ActivityType, "Id", "Name");
-            return View();
-        }
-
-        // POST: ActivitiesManagement/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,UserId,StartTimestamp,EndTimestamp,Source,ActivityTypeId,CaloriesBurnt,AverageHeartRate,StepsTaken,MetresTravelled,MetresElevationGained")] Activity activity)
-        {
-            if (ModelState.IsValid)
-            {
-                _context.Add(activity);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["ActivityTypeId"] = new SelectList(_context.ActivityType, "Id", "Name", activity.ActivityTypeId);
-            return View(activity);
         }
 
         // GET: ActivitiesManagement/Edit/5
