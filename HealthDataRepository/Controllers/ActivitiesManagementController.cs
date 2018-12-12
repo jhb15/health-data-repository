@@ -7,24 +7,27 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using HealthDataRepository.Models;
 using Microsoft.AspNetCore.Authorization;
+using HealthDataRepository.Repositories;
 
 namespace HealthDataRepository.Controllers
 {
     [Authorize(AuthenticationSchemes = "oidc", Policy = "Administrator")]
     public class ActivitiesManagementController : Controller
     {
-        private readonly HealthDataRepositoryContext _context;
+        private readonly IActivityRepository activityRepository;
+        private readonly IActivityTypeRepository activityTypeRepository;
 
-        public ActivitiesManagementController(HealthDataRepositoryContext context)
+        public ActivitiesManagementController(IActivityRepository activityRepository, IActivityTypeRepository activityTypeRepository)
         {
-            _context = context;
+            this.activityRepository = activityRepository;
+            this.activityTypeRepository = activityTypeRepository;
         }
 
         // GET: ActivitiesManagement
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? pageNumber)
         {
-            var healthDataRepositoryContext = _context.Activity.Include(a => a.ActivityType);
-            return View(await healthDataRepositoryContext.ToListAsync());
+            int page = (pageNumber ?? 1);
+            return View(await activityRepository.GetAllPaginatedAsync(page, 10));
         }
 
         // GET: ActivitiesManagement/Edit/5
@@ -35,12 +38,12 @@ namespace HealthDataRepository.Controllers
                 return NotFound();
             }
 
-            var activity = await _context.Activity.FindAsync(id);
+            var activity = await activityRepository.GetByIdAsync(id.Value);
             if (activity == null)
             {
                 return NotFound();
             }
-            ViewData["ActivityTypeId"] = new SelectList(_context.ActivityType, "Id", "Name", activity.ActivityTypeId);
+            ViewData["ActivityTypeId"] = new SelectList(await activityTypeRepository.GetAllAsync(), "Id", "Name", activity.ActivityTypeId);
             return View(activity);
         }
 
@@ -58,25 +61,10 @@ namespace HealthDataRepository.Controllers
 
             if (ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(activity);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!ActivityExists(activity.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+                await activityRepository.UpdateAsync(activity);
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ActivityTypeId"] = new SelectList(_context.ActivityType, "Id", "Name", activity.ActivityTypeId);
+            ViewData["ActivityTypeId"] = new SelectList(await activityTypeRepository.GetAllAsync(), "Id", "Name", activity.ActivityTypeId);
             return View(activity);
         }
 
@@ -88,9 +76,7 @@ namespace HealthDataRepository.Controllers
                 return NotFound();
             }
 
-            var activity = await _context.Activity
-                .Include(a => a.ActivityType)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var activity = await activityRepository.GetByIdAsync(id.Value);
             if (activity == null)
             {
                 return NotFound();
@@ -104,15 +90,9 @@ namespace HealthDataRepository.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var activity = await _context.Activity.FindAsync(id);
-            _context.Activity.Remove(activity);
-            await _context.SaveChangesAsync();
+            var activity = await activityRepository.GetByIdAsync(id);
+            await activityRepository.DeleteAsync(activity);
             return RedirectToAction(nameof(Index));
-        }
-
-        private bool ActivityExists(int id)
-        {
-            return _context.Activity.Any(e => e.Id == id);
         }
     }
 }

@@ -30,6 +30,14 @@ namespace HealthDataRepository.Repositories
             return activity;
         }
 
+        public async Task<PaginatedList<Activity>> GetAllPaginatedAsync(int pageNumber, int perPage)
+        {
+            var source = context.Activity.Include(a => a.ActivityType).OrderByDescending(a => a.Id);
+            var count = await source.CountAsync();
+            var items = await source.Skip((pageNumber - 1) * perPage).Take(perPage).ToListAsync();
+            return new PaginatedList<Activity>(items, count, pageNumber, perPage);
+        }
+
         public async Task<Activity> GetByIdAsync(int id)
         {
             return await context.Activity.FindAsync(id);

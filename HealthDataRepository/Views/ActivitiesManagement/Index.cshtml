@@ -1,7 +1,9 @@
-﻿@model IEnumerable<HealthDataRepository.Models.Activity>
+﻿@model HealthDataRepository.Models.PaginatedList<HealthDataRepository.Models.Activity>
 
 @{
     ViewData["Title"] = "Activities";
+    var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+    var nextDisabled = !Model.HasNextPage ? "disabled" : "";
 }
 
 <div class="card">
@@ -12,34 +14,34 @@
         <thead>
             <tr>
                 <th>
-                    @Html.DisplayNameFor(model => model.UserId)
+                    @Html.DisplayNameFor(model => model.FirstOrDefault().UserId)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.StartTimestamp)
+                    @Html.DisplayNameFor(model => model.FirstOrDefault().StartTimestamp)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.EndTimestamp)
+                    @Html.DisplayNameFor(model => model.FirstOrDefault().EndTimestamp)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.Source)
+                    @Html.DisplayNameFor(model => model.FirstOrDefault().Source)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.ActivityType)
+                    @Html.DisplayNameFor(model => model.FirstOrDefault().ActivityType)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.CaloriesBurnt)
+                    @Html.DisplayNameFor(model => model.FirstOrDefault().CaloriesBurnt)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.AverageHeartRate)
+                    @Html.DisplayNameFor(model => model.FirstOrDefault().AverageHeartRate)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.StepsTaken)
+                    @Html.DisplayNameFor(model => model.FirstOrDefault().StepsTaken)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.MetresTravelled)
+                    @Html.DisplayNameFor(model => model.FirstOrDefault().MetresTravelled)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.MetresElevationGained)
+                    @Html.DisplayNameFor(model => model.FirstOrDefault().MetresElevationGained)
                 </th>
                 <th></th>
             </tr>
@@ -86,5 +88,16 @@
             }
         </tbody>
     </table>
+    <div class="card-body">
+        <nav>
+            <ul class="pagination">
+                <li class="page-item">
+                    <a asp-action="Index" asp-route-pageNumber="@(Model.PageIndex - 1)" class="btn btn-default page-link @prevDisabled">Previous</a>
+                </li>
+                <li class="page-item">
+                    <a asp-action="Index" asp-route-pageNumber="@(Model.PageIndex + 1)" class="btn btn-default page-link @nextDisabled">Next</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
 </div>
-
