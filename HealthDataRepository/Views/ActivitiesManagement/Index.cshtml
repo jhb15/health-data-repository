@@ -1,0 +1,112 @@
+﻿@model HealthDataRepository.Models.PaginatedList<HealthDataRepository.Models.Activity>
+
+@{
+    ViewData["Title"] = "Activities";
+    var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+    var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+    var users = ViewData["Users"] as User[];
+}
+
+<div class="card">
+    <div class="card-header">
+        @ViewData["Title"]
+    </div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.FirstOrDefault().UserId)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.FirstOrDefault().StartTimestamp)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.FirstOrDefault().EndTimestamp)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.FirstOrDefault().Source)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.FirstOrDefault().ActivityType)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.FirstOrDefault().CaloriesBurnt)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.FirstOrDefault().AverageHeartRate)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.FirstOrDefault().StepsTaken)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.FirstOrDefault().MetresTravelled)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.FirstOrDefault().MetresElevationGained)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @{
+                            var displayName = "Deleted User";
+                            var user = users.FirstOrDefault(u => u.Id == item.UserId);
+                            if (user != null)
+                            {
+                                displayName = user.Email;
+                            }
+                        }
+                        @displayName
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.StartTimestamp)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.EndTimestamp)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Source)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ActivityType.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.CaloriesBurnt)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.AverageHeartRate)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.StepsTaken)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.MetresTravelled)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.MetresElevationGained)
+                    </td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-info btn-sm">Edit</a>
+                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger btn-sm">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <div class="card-body">
+        <nav>
+            <ul class="pagination">
+                <li class="page-item">
+                    <a asp-action="Index" asp-route-pageNumber="@(Model.PageIndex - 1)" class="btn btn-default page-link @prevDisabled">Previous</a>
+                </li>
+                <li class="page-item">
+                    <a asp-action="Index" asp-route-pageNumber="@(Model.PageIndex + 1)" class="btn btn-default page-link @nextDisabled">Next</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</div>

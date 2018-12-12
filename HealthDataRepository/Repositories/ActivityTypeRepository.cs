@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using HealthDataRepository.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace HealthDataRepository.Repositories
 {
@@ -13,6 +14,11 @@ namespace HealthDataRepository.Repositories
         public ActivityTypeRepository(HealthDataRepositoryContext context)
         {
             this.context = context;
+        }
+
+        public async Task<List<ActivityType>> GetAllAsync()
+        {
+            return await context.ActivityType.ToListAsync();
         }
 
         public async Task<ActivityType> GetByIdAsync(int id)

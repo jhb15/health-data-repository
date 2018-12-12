@@ -1,0 +1,80 @@
+﻿@model HealthDataRepository.Models.Activity
+
+@{
+    ViewData["Title"] = "Edit Activity";
+}
+
+<div class="row">
+    <div class="col-md-4 col-sm-12">
+
+        <div class="card">
+            <div class="card-header">
+                @ViewData["Title"]
+            </div>
+            <div class="card-body">
+                <form asp-action="Edit">
+                    <input type="hidden" asp-for="Id" />
+                    <div class="form-group">
+                        <label asp-for="UserId" class="control-label"></label>
+                        <input asp-for="UserId" class="form-control" readonly />
+                        <span asp-validation-for="UserId" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="StartTimestamp" class="control-label"></label>
+                        <input asp-for="StartTimestamp" class="form-control" />
+                        <span asp-validation-for="StartTimestamp" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="EndTimestamp" class="control-label"></label>
+                        <input asp-for="EndTimestamp" class="form-control" />
+                        <span asp-validation-for="EndTimestamp" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Source" class="control-label"></label>
+                        <input asp-for="Source" class="form-control" />
+                        <span asp-validation-for="Source" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="ActivityTypeId" class="control-label"></label>
+                        <select asp-for="ActivityTypeId" class="form-control" asp-items="ViewBag.ActivityTypeId"></select>
+                        <span asp-validation-for="ActivityTypeId" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="CaloriesBurnt" class="control-label"></label>
+                        <input asp-for="CaloriesBurnt" class="form-control" />
+                        <span asp-validation-for="CaloriesBurnt" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="AverageHeartRate" class="control-label"></label>
+                        <input asp-for="AverageHeartRate" class="form-control" />
+                        <span asp-validation-for="AverageHeartRate" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="StepsTaken" class="control-label"></label>
+                        <input asp-for="StepsTaken" class="form-control" />
+                        <span asp-validation-for="StepsTaken" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="MetresTravelled" class="control-label"></label>
+                        <input asp-for="MetresTravelled" class="form-control" />
+                        <span asp-validation-for="MetresTravelled" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="MetresElevationGained" class="control-label"></label>
+                        <input asp-for="MetresElevationGained" class="form-control" />
+                        <span asp-validation-for="MetresElevationGained" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <input type="submit" value="Save" class="btn btn-danger" />
+                        <a asp-action="Index" class="btn btn-primary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

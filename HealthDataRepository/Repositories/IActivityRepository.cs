@@ -8,6 +8,8 @@ namespace HealthDataRepository.Repositories
 {
     public interface IActivityRepository
     {
+        Task<PaginatedList<Activity>> GetAllPaginatedAsync(int pageNumber, int perPage);
+
         Task<List<Activity>> GetByUserIdAsync(string userId);
 
         Task<List<Activity>> GetByUserIdAsync(string userId, DateTime from, DateTime to);

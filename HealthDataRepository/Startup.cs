@@ -18,6 +18,7 @@ using System.Net;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.AspNetCore.Authentication;
 using HealthDataRepository.Repositories;
+using HealthDataRepository.Services;
 
 namespace HealthDataRepository
 {
@@ -37,8 +38,12 @@ namespace HealthDataRepository
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            var appConfiguration = Configuration.GetSection("HealthData");
+
             services.AddScoped<IActivityRepository, ActivityRepository>();
             services.AddScoped<IActivityTypeRepository, ActivityTypeRepository>();
+            services.AddHttpClient("gatekeeper", client => client.BaseAddress = new Uri(appConfiguration.GetValue<string>("GatekeeperUrl")));
+            services.AddSingleton<IGatekeeperApiClient, GatekeeperApiClient>();
 
             services.Configure<CookiePolicyOptions>(options =>
             {
@@ -64,7 +69,6 @@ namespace HealthDataRepository
                 });
             }
 
-            var appConfiguration = Configuration.GetSection("HealthData");
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
             services.AddAuthentication(options =>

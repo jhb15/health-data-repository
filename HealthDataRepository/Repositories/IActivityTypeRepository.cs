@@ -9,5 +9,7 @@ namespace HealthDataRepository.Repositories
     public interface IActivityTypeRepository
     {
         Task<ActivityType> GetByIdAsync(int id);
+
+        Task<List<ActivityType>> GetAllAsync();
     }
 }
