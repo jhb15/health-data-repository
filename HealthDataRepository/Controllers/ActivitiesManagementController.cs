@@ -8,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using HealthDataRepository.Models;
 using Microsoft.AspNetCore.Authorization;
 using HealthDataRepository.Repositories;
+using HealthDataRepository.Services;
+using Newtonsoft.Json;
 
 namespace HealthDataRepository.Controllers
 {
@@ -16,18 +18,31 @@ namespace HealthDataRepository.Controllers
     {
         private readonly IActivityRepository activityRepository;
         private readonly IActivityTypeRepository activityTypeRepository;
+        private readonly IGatekeeperApiClient gatekeeperApiClient;
 
-        public ActivitiesManagementController(IActivityRepository activityRepository, IActivityTypeRepository activityTypeRepository)
+        public ActivitiesManagementController(IActivityRepository activityRepository, IActivityTypeRepository activityTypeRepository, IGatekeeperApiClient gatekeeperApiClient)
         {
             this.activityRepository = activityRepository;
             this.activityTypeRepository = activityTypeRepository;
+            this.gatekeeperApiClient = gatekeeperApiClient;
         }
 
         // GET: ActivitiesManagement
         public async Task<IActionResult> Index(int? pageNumber)
         {
             int page = (pageNumber ?? 1);
-            return View(await activityRepository.GetAllPaginatedAsync(page, 10));
+            var activities = await activityRepository.GetAllPaginatedAsync(page, 10);
+
+            var response = await gatekeeperApiClient.PostAsync("api/Users/Batch", activities.Select(m => m.UserId).ToArray());
+            if (response.IsSuccessStatusCode)
+            {
+                ViewData["Users"] = JsonConvert.DeserializeObject<User[]>(response.Content.ReadAsStringAsync().Result);
+            }
+            else
+            {
+                ViewData["Users"] = new User[0];
+            }
+            return View(activities);
         }
 
         // GET: ActivitiesManagement/Edit/5

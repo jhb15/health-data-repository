@@ -4,6 +4,7 @@
     ViewData["Title"] = "Activities";
     var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
     var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+    var users = ViewData["Users"] as User[];
 }
 
 <div class="card">
@@ -51,7 +52,15 @@
             {
                 <tr>
                     <td>
-                        @Html.DisplayFor(modelItem => item.UserId)
+                        @{
+                            var displayName = "Deleted User";
+                            var user = users.FirstOrDefault(u => u.Id == item.UserId);
+                            if (user != null)
+                            {
+                                displayName = user.Email;
+                            }
+                        }
+                        @displayName
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.StartTimestamp)
