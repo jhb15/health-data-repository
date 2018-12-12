@@ -35,19 +35,19 @@ namespace HealthDataRepository.Models
 
         public virtual ActivityType ActivityType { get; set; }
 
-        [Range(0, long.MaxValue)]
+        [Range(0, 10000)]
         public virtual int CaloriesBurnt { get; set; }
 
-        [Range(0, long.MaxValue)]
+        [Range(0, 300)]
         public virtual int AverageHeartRate { get; set; }
 
-        [Range(0, long.MaxValue)]
+        [Range(0, 100000)]
         public virtual int StepsTaken { get; set; }
 
-        [Range(0, double.MaxValue)]
+        [Range(0, 100000)]
         public virtual double MetresTravelled { get; set; }
 
-        [Range(0, double.MaxValue)]
+        [Range(-9000, 9000)]
         public virtual double MetresElevationGained { get; set; }
     }
 }
