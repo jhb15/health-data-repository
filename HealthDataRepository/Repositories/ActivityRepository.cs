@@ -32,7 +32,7 @@ namespace HealthDataRepository.Repositories
 
         public async Task<PaginatedList<Activity>> GetAllPaginatedAsync(int pageNumber, int perPage)
         {
-            var source = context.Activity.Include(a => a.ActivityType).OrderByDescending(a => a.Id);
+            var source = context.Activity.Include(a => a.ActivityType).OrderByDescending(a => a.StartTimestamp);
             var count = await source.CountAsync();
             var items = await source.Skip((pageNumber - 1) * perPage).Take(perPage).ToListAsync();
             return new PaginatedList<Activity>(items, count, pageNumber, perPage);
