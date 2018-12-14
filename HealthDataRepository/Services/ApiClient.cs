@@ -9,18 +9,18 @@ using System.Threading.Tasks;
 
 namespace HealthDataRepository.Services
 {
-    public class GatekeeperApiClient : IGatekeeperApiClient
+    public class ApiClient : IApiClient
     {
         private readonly HttpClient client;
         private IConfigurationSection appConfig;
         private DiscoveryCache discoveryCache;
         private ILogger logger;
 
-        public GatekeeperApiClient(IHttpClientFactory httpClientFactory, IConfiguration configuration, ILogger<GatekeeperApiClient> log)
+        public ApiClient(IHttpClientFactory httpClientFactory, IConfiguration configuration, ILogger<ApiClient> log)
         {
             appConfig = configuration.GetSection("HealthData");
             discoveryCache = new DiscoveryCache(appConfig.GetValue<string>("GatekeeperUrl"));
-            client = httpClientFactory.CreateClient("gatekeeper");
+            client = httpClientFactory.CreateClient("apiclient");
             logger = log;
         }
 
@@ -38,7 +38,7 @@ namespace HealthDataRepository.Services
                 Address = discovery.TokenEndpoint,
                 ClientId = appConfig.GetValue<string>("ClientId"),
                 ClientSecret = appConfig.GetValue<string>("ClientSecret"),
-                Scope = "gatekeeper"
+                Scope = "gatekeeper comms"
             };
             var response = await client.RequestClientCredentialsTokenAsync(tokenRequest);
             if (response.IsError)

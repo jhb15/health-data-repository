@@ -21,5 +21,7 @@ namespace HealthDataRepository.Repositories
         Task<Activity> UpdateAsync(Activity activity);
 
         Task<Activity> DeleteAsync(Activity activity);
+
+        Task<List<string>> GetUsersWithRecordedActivities();
     }
 }

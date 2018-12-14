@@ -1,24 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
+﻿using Hangfire;
+using Hangfire.MySql;
 using HealthDataRepository.Models;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.HttpOverrides;
-using System.Net;
-using System.IdentityModel.Tokens.Jwt;
-using Microsoft.AspNetCore.Authentication;
 using HealthDataRepository.Repositories;
 using HealthDataRepository.Services;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using System;
+using System.IdentityModel.Tokens.Jwt;
+using System.Net;
 
 namespace HealthDataRepository
 {
@@ -39,11 +35,17 @@ namespace HealthDataRepository
         public void ConfigureServices(IServiceCollection services)
         {
             var appConfiguration = Configuration.GetSection("HealthData");
+            var connectionString = Configuration.GetConnectionString("HealthDataRepositoryContext");
 
+            services.AddHttpClient("apiclient", client =>
+            {
+                var host = new Uri(appConfiguration.GetValue<string>("GatekeeperUrl")).Host;
+                client.BaseAddress = new Uri($"https://{host}");
+            });
             services.AddScoped<IActivityRepository, ActivityRepository>();
             services.AddScoped<IActivityTypeRepository, ActivityTypeRepository>();
-            services.AddHttpClient("gatekeeper", client => client.BaseAddress = new Uri(appConfiguration.GetValue<string>("GatekeeperUrl")));
-            services.AddSingleton<IGatekeeperApiClient, GatekeeperApiClient>();
+            services.AddScoped<IEmailRecordRepository, EmailRecordRepository>();
+            services.AddSingleton<IApiClient, ApiClient>();
 
             services.Configure<CookiePolicyOptions>(options =>
             {
@@ -54,8 +56,9 @@ namespace HealthDataRepository
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
-            services.AddDbContext<HealthDataRepositoryContext>(options =>
-                    options.UseMySql(Configuration.GetConnectionString("HealthDataRepositoryContext")));
+            services.AddDbContext<HealthDataRepositoryContext>(options => options.UseMySql(connectionString));
+
+            services.AddHangfire(x => x.UseStorage(new MySqlStorage(connectionString, new MySqlStorageOptions())));
 
             if (!environment.IsDevelopment())
             {
@@ -106,7 +109,6 @@ namespace HealthDataRepository
             });
 
             services.AddHttpClient();
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -114,7 +116,9 @@ namespace HealthDataRepository
         {
             if (env.IsDevelopment())
             {
+                app.UseHangfireDashboard();
                 app.UseDeveloperExceptionPage();
+                app.UseDatabaseErrorPage();
             }
             else
             {
@@ -132,6 +136,7 @@ namespace HealthDataRepository
                 app.UseHsts();
             }
 
+            app.UseHangfireServer();
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCookiePolicy();
@@ -142,8 +147,10 @@ namespace HealthDataRepository
                     name: "default",
                     template: "{controller=ActivityTypes}/{action=Index}/{id?}");
             });
-        }
 
+            RecurringJob.AddOrUpdate<EmailManager>(es => es.SendActivityUpdateEmails(), Cron.Minutely);
+            RecurringJob.AddOrUpdate<EmailManager>(es => es.SendMissedReadingEmails(), Cron.Minutely);
+        }
 
         private static void UpdateDatabase(IApplicationBuilder app)
         {

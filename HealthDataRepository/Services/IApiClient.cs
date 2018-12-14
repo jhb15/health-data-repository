@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace HealthDataRepository.Services
 {
-    public interface IGatekeeperApiClient
+    public interface IApiClient
     {
         Task<HttpResponseMessage> GetAsync(string path);
 

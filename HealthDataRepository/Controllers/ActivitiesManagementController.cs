@@ -18,13 +18,13 @@ namespace HealthDataRepository.Controllers
     {
         private readonly IActivityRepository activityRepository;
         private readonly IActivityTypeRepository activityTypeRepository;
-        private readonly IGatekeeperApiClient gatekeeperApiClient;
+        private readonly IApiClient apiClient;
 
-        public ActivitiesManagementController(IActivityRepository activityRepository, IActivityTypeRepository activityTypeRepository, IGatekeeperApiClient gatekeeperApiClient)
+        public ActivitiesManagementController(IActivityRepository activityRepository, IActivityTypeRepository activityTypeRepository, IApiClient apiClient)
         {
             this.activityRepository = activityRepository;
             this.activityTypeRepository = activityTypeRepository;
-            this.gatekeeperApiClient = gatekeeperApiClient;
+            this.apiClient = apiClient;
         }
 
         // GET: ActivitiesManagement
@@ -33,7 +33,7 @@ namespace HealthDataRepository.Controllers
             int page = (pageNumber ?? 1);
             var activities = await activityRepository.GetAllPaginatedAsync(page, 10);
 
-            var response = await gatekeeperApiClient.PostAsync("api/Users/Batch", activities.Select(m => m.UserId).ToArray());
+            var response = await apiClient.PostAsync("/gatekeeper/api/Users/Batch", activities.Select(m => m.UserId).ToArray());
             if (response.IsSuccessStatusCode)
             {
                 ViewData["Users"] = JsonConvert.DeserializeObject<User[]>(response.Content.ReadAsStringAsync().Result);
