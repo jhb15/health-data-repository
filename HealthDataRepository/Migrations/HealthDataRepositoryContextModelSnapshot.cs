@@ -57,7 +57,7 @@ namespace HealthDataRepository.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<int?>("ActivityTypeId");
+                    b.Property<int>("ActivityTypeId");
 
                     b.Property<string>("MappingKey")
                         .IsRequired();
@@ -85,6 +85,23 @@ namespace HealthDataRepository.Migrations
                     b.ToTable("ActivityType");
                 });
 
+            modelBuilder.Entity("HealthDataRepository.Models.EmailRecord", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<DateTime>("Timestamp");
+
+                    b.Property<int>("Type");
+
+                    b.Property<string>("UserId")
+                        .IsRequired();
+
+                    b.HasKey("Id");
+
+                    b.ToTable("EmailRecord");
+                });
+
             modelBuilder.Entity("HealthDataRepository.Models.Activity", b =>
                 {
                     b.HasOne("HealthDataRepository.Models.ActivityType", "ActivityType")
@@ -97,7 +114,8 @@ namespace HealthDataRepository.Migrations
                 {
                     b.HasOne("HealthDataRepository.Models.ActivityType")
                         .WithMany("Mappings")
-                        .HasForeignKey("ActivityTypeId");
+                        .HasForeignKey("ActivityTypeId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 #pragma warning restore 612, 618
         }

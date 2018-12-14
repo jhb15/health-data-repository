@@ -7,10 +7,8 @@ using System.Threading.Tasks;
 
 namespace HealthDataRepository.Models
 {
-    [Authorize(AuthenticationSchemes = "oidc", Policy = "Administrator")]
     public class ActivityType
-    {
-   
+    {  
         [Key]
         public virtual int Id { get; set; }
 

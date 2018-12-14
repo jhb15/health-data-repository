@@ -57,6 +57,11 @@ namespace HealthDataRepository.Repositories
                 .ToListAsync();
         }
 
+        public async Task<List<string>> GetUsersWithRecordedActivities()
+        {
+            return await context.Activity.Select(a => a.UserId).Distinct().ToListAsync();
+        }
+
         public async Task<Activity> UpdateAsync(Activity activity)
         {
             context.Entry(activity).State = EntityState.Modified;
