@@ -1,4 +1,5 @@
-﻿using HealthDataRepository.Controllers;
+﻿using AberFitnessAuditLogger;
+using HealthDataRepository.Controllers;
 using HealthDataRepository.Models;
 using HealthDataRepository.Repositories;
 using HealthDataRepositoryTest.TestUtils;
@@ -15,13 +16,16 @@ namespace HealthDataRepositoryTest.Controllers
     {
         private readonly Mock<IActivityRepository> activityRepository;
         private readonly Mock<IActivityTypeRepository> activityTypeRepository;
+        private readonly Mock<IAuditLogger> auditLogger;
         private readonly ActivitiesController controller;
+           
 
         public ActivitiesController_Test()
         {
             activityRepository = new Mock<IActivityRepository>();
             activityTypeRepository = new Mock<IActivityTypeRepository>();
-            controller = new ActivitiesController(activityRepository.Object, activityTypeRepository.Object);
+            auditLogger = new Mock<IAuditLogger>();
+            controller = new ActivitiesController(activityRepository.Object, activityTypeRepository.Object, auditLogger.Object);
         }
 
         [Fact]
