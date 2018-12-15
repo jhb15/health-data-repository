@@ -9,6 +9,7 @@ using HealthDataRepository.Models;
 using Microsoft.AspNetCore.Authorization;
 using HealthDataRepository.Repositories;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using AberFitnessAuditLogger;
 
 namespace HealthDataRepository.Controllers
 {
@@ -19,11 +20,13 @@ namespace HealthDataRepository.Controllers
     {
         private readonly IActivityRepository activityRepository;
         private readonly IActivityTypeRepository activityTypeRepository;
+        private readonly IAuditLogger auditLogger;
 
-        public ActivitiesController(IActivityRepository activityRepository, IActivityTypeRepository activityTypeRepository)
+        public ActivitiesController(IActivityRepository activityRepository, IActivityTypeRepository activityTypeRepository, IAuditLogger auditLogger)
         {
             this.activityRepository = activityRepository;
             this.activityTypeRepository = activityTypeRepository;
+            this.auditLogger = auditLogger;
         }
 
         // GET: api/Activities/{id}
@@ -37,6 +40,8 @@ namespace HealthDataRepository.Controllers
                 return NotFound();
             }
 
+            await auditLogger.log(activity.UserId, $"Accessed activity ID: {id}");
+
             return Ok(activity);
         }
 
@@ -47,11 +52,17 @@ namespace HealthDataRepository.Controllers
             if(from.Year > 1 && to.Year > 1)
             {
                 var activities = await activityRepository.GetByUserIdAsync(userId, from, to);
+
+                await auditLogger.log(userId, $"Retrieved activities between {from.ToLongDateString()} to {to.ToLongDateString()}" );
+
                 return Ok(activities);
             }
             else
             {
                 var activities = await activityRepository.GetByUserIdAsync(userId);
+
+                await auditLogger.log(userId, "Retrieved all activity data");
+
                 return Ok(activities);
             }
         }
@@ -75,6 +86,8 @@ namespace HealthDataRepository.Controllers
 
             await activityRepository.UpdateAsync(activity);
 
+            await auditLogger.log(activity.UserId, $"Updated activity {id}");
+
             return Ok(activity);
         }
 
@@ -91,6 +104,8 @@ namespace HealthDataRepository.Controllers
 
             activity = await activityRepository.AddAsync(activity);
 
+            await auditLogger.log(activity.UserId, $"Created new activity id {activity.Id}");
+
             return CreatedAtAction("GetActivity", new { id = activity.Id }, activity);
         }
 
@@ -105,6 +120,9 @@ namespace HealthDataRepository.Controllers
             }
 
             await activityRepository.DeleteAsync(activity);
+
+            await auditLogger.log(activity.UserId, $"Deleted activity {id}");
+
             return Ok(activity);
         }
 
