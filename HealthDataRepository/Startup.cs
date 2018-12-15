@@ -150,7 +150,7 @@ namespace HealthDataRepository
                     template: "{controller=ActivityTypes}/{action=Index}/{id?}");
             });
 
-            RecurringJob.AddOrUpdate<EmailManager>(es => es.SendScheduledEmails(), Cron.Hourly);
+            RecurringJob.AddOrUpdate<EmailManager>(es => es.SendScheduledEmails(), Cron.MinuteInterval(5));
         }
 
         private static void UpdateDatabase(IApplicationBuilder app)
