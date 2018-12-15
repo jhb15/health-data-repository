@@ -1,0 +1,363 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "description": "Health Data Repository API",
+    "version": "1.2.0",
+    "title": "Health Data Repository"
+  },
+  "tags": [
+    {
+      "name": "Activity",
+      "description": "Performs CRUD operations on Activity records"
+    },
+    {
+      "name": "ActivityType",
+      "description": "Provides a list of Activity Types configured by an admin, with mappings relevant to ingest services."
+    }
+  ],
+  "servers": [
+    {
+      "url": "https://docker2.aberfitness.biz/health-data-repository/",
+      "description": "Staging instance"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "OAuth2": {
+        "type": "oauth2",
+        "flows": {
+          "clientCredentials": {
+            "tokenUrl": "../gatekeeper/connect/token",
+            "refreshUrl": "../gatekeeper/connect/token",
+            "scopes": "health_data_repository"
+          }
+        }
+      }
+    },
+    "schemas": {
+      "Activity": {
+        "properties": {
+          "userID": {
+            "type": "string",
+            "format": "uuid",
+            "description": "User's unique ID"
+          },
+          "startTimestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "endTimestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "source": {
+            "type": "string",
+            "description": "Activity source (\"Manual\" or \"Fitbit\")"
+          },
+          "activityTypeId": {
+            "type": "integer",
+            "description": "ID for the ActivityType"
+          },
+          "caloriesBurnt": {
+            "type": "integer",
+            "description": "KCals burnt during this activity"
+          },
+          "averageHeartRate": {
+            "type": "integer",
+            "description": "User's average heart rate throughout this activity"
+          },
+          "stepsTaken": {
+            "type": "integer",
+            "description": "Number of steps taken by the user during this activity, if applicable"
+          },
+          "metresTravelled": {
+            "type": "number",
+            "format": "double",
+            "description": "Number of metres travelled by the user during this activity, if applicable"
+          },
+          "metresElevationGained": {
+            "type": "number",
+            "format": "double",
+            "description": "Elevation gained by the user in metres during the activity, if applicable"
+          }
+        },
+        "required": [
+          "userID",
+          "startTimestamp",
+          "endTimestamp",
+          "source",
+          "activityTypeId"
+        ]
+      },
+      "ActivityWithId": {
+        "properties": {
+          "Id": {
+            "type": "integer"
+          }
+        },
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Activity"
+          }
+        ]
+      },
+      "ActivityType": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "The ActivityType ID"
+          },
+          "name": {
+            "type": "string",
+            "description": "The name of the activity"
+          },
+          "mappings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ActivityMapping"
+            }
+          }
+        }
+      },
+      "ActivityMapping": {
+        "properties": {
+          "source": {
+            "type": "string",
+            "description": "Activity source (\"Manual\" or \"Fitbit\")"
+          },
+          "mappingKey": {
+            "type": "string",
+            "description": "The identifier used by the Source service to identify this activity"
+          },
+        }
+      }
+    }
+  },
+  "paths": {
+    "/api/Activities/{id}": {
+      "get": {
+        "tags": [
+          "Activity"
+        ],
+        "summary": "Gets an Activity record",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "content/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActivityWithId"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorised"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Activity"
+        ],
+        "summary": "Updates an existing Activity record",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ActivityWithId"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated",
+            "content": {
+              "content/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActivityWithId"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401'": {
+            "description": "Unauthorised"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Activity"
+        ],
+        "summary": "Deletes an Activity record",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Deleted",
+            "content": {
+              "content/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActivityWithId"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorised"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        }
+      }
+    },
+    "/api/Activities/ByUser/{userId}": {
+      "get": {
+        "tags": [
+          "Activity"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "userId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The user ID associated with the activities to find"
+          },
+          {
+            "in": "query",
+            "name": "from",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "in": "query",
+            "name": "to",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ActivityWithId"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorised"
+          }
+        }
+      }
+    },
+    "/api/Activities": {
+      "post": {
+        "tags": [
+          "Activity"
+        ],
+        "summary": "Creates a new Activity record",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Activity"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "content/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActivityWithId"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorised"
+          }
+        }
+      }
+    },
+    "/api/ActivityTypes": {
+      "get": {
+        "tags": [
+          "ActivityType"
+        ],
+        "summary": "Gets the list of ActivityTypes added by administrators",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "content/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActivityType"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorised"
+          }
+        }
+      }
+    }
+  }
+}

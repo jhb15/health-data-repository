@@ -1,10 +1,40 @@
-language: csharp
-solution: health-data-repository.sln
-mono: none
-dotnet: 2.1
+env:
+  global:
+  - secure: H+IhgC9imS79Jvzx6OMwhzSSSbd7focgmlTlanxPJXMnKCG/NSKu5sEYW7KyVMe2ajNEqwwsSwsE/Mv5vXt2XFpGGH2dvaSqeqvlFMYrQt+GOFNOzXgjLkLi4WjjjYeqR4UQ1YczyxnbCFSYqFVhHmdSiXvPoX6Fj4R8IaBAl1tE1Ffv2XuHKAUCJapS68meNBZyvLR0ncD2ya3iMMDLuj/fL4QQA9u1g0liGs907uqAP1BrlCVhF8xT31is8hrrSUQAuVmyAkxytrJjNtj7yInJStB2nGtuWtKlI6Lc7lDrlJpm6qTI1r7H3NNtm8jygyqA7xqCaK8ZqK8eabSX9p8UyisuG1zdZ5/74m9vJfP72jjBj8Wysc2CKYD1UaheNgOkyQT0bhd4v9xqxbeJ6vBQ0tBtIWMJcUwBaQlvsI6g680TIljZAJGvol+bbS2f+3Ndj/EdXfDMZWzn6E5J5vPdmQXTdzr5vhNnb0SLZcSifjGJAR4ZTWybU4P/BKxsBp+IdH4Ikcege+Us+aeyWk3VkS+fe+pLLFaZvifW1wwHOhGlnH9ytHys8ujDyc7pGTokeWqiPL6I2nA5Eo8tmkZCT6EqrRGpOtmuo36hDtoEVuO7V9uS0wb9ZumHDbkmIc1fbKFVqFoT5q66T3X7gZq1v5Wi+ybyzxDciZ7QTSc=
+  - secure: LDcIGDKwxjgTzrTJVK0pzUOg9Bd7mCH/IQn/2+wdph3zrwiDPxSyC5iIpb3oIgrD6pyZWBMuydn3zlKFxHsr8T5E6vLMPN/DcdyzB7BE3HczZBvvGZYHxp/lwel//+AijM5st/MN1az8xrGl3iD0HkyZ9da60OJ1S19jyqpXMQAvO2z+lRdXJp2faxFNfImdjVgQyL+drxyATn2ej/yp3M30v1DkDTX7DFN3iFhN/veRWJ8iRN1/19uOuEh5xfmZNtvlvkebGs/IC6Tgp/JBFCHyVFPObMWF0pz3UamJ8RUysVzAPYjHjzXhWw5DOmVurqZ8PGOzg80+olQiQWAtL7gl3oBMMdk3yH7Ek3fjaz6WJsF4bAVaCEgzNALMzVvQYDOguKZL9+bBJE1wZtfZojAIZhEpZxQzVZZUamI/aza8sTg6lEzHscWGKJjaIhg33splNsZ460+wDifybYDraQ6vhfSGxqE7+Wc8hFvFXHocu9LfKYg+cYZjC5fK954OJK0S9BPa3/06xOUWvxo2eKd6uk9oGpM8r54JMhV9ARFrkR/XnK4M3Cf3Zxyi5x3fB6rYdvFZkUcs5g/547fu3kZTtl+emMdcSuagL+dSV63qJx0YXyx/VcmAXYVOGdYDKSmltPT5U2x4eFuVt7d+V38DwgSOFJ403DBpEl2WkJE=
 
-script:
-- dotnet restore
+stages:
+  - test
+  - name: build_staging
+    if: branch = development AND type = push
+  - name: build_release
+    if: branch = master AND type = push
+
+jobs:
+  include:
+    - stage: test
+      name: "xUnit Tests"
+      language: csharp
+      solution: health-data-repository.sln
+      mono: none
+      dotnet: 2.1
+      script:
+        - dotnet restore
+        - dotnet test HealthDataRepositoryTest/HealthDataRepositoryTest.csproj
+    - stage: build_staging
+      name: "Build docker staging image"
+      sudo: required
+      services:
+        - docker
+      script:
+        - ./bin/docker.sh staging
+    - stage: build_release
+      name: "Build docker release image"
+      sudo: required
+      services:
+        - docker
+      script:
+        - ./bin/docker.sh latest
 
 notifications:
     slack: sem5640-2018:qMQqfa3QEJnk6K0yHcT7KMg0

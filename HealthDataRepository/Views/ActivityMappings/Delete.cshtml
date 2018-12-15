@@ -1,0 +1,39 @@
+﻿@model HealthDataRepository.Models.ActivityMapping
+
+@{
+    ViewData["Title"] = "Delete";
+}
+
+
+<div class="row">
+    <div class="col-md-12 col-lg-6">
+        <div class="card">
+            <div class="card-header bg-danger text-white">
+                <span class="card-title">Are you sure you want to delete Activity Mapping?</span>
+            </div>
+
+            <div class="card-body">
+                <dl class="dl-horizontal">
+                    <dt>
+                        @Html.DisplayNameFor(model => model.Source)
+                    </dt>
+                    <dd>
+                        @Html.DisplayFor(model => model.Source)
+                    </dd>
+                    <dt>
+                        @Html.DisplayNameFor(model => model.MappingKey)
+                    </dt>
+                    <dd>
+                        @Html.DisplayFor(model => model.MappingKey)
+                    </dd>
+                </dl>
+
+                <form asp-action="Delete">
+                    <input type="hidden" asp-for="Id" />
+                    <input type="submit" value="Delete" class="btn btn-danger" />
+                    <a href="/ActivityTypes/Edit/@Model.ActivityTypeId" class="btn btn-info">Back to Activity Type</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
