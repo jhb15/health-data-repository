@@ -18,7 +18,7 @@ namespace HealthDataRepository.Services
 
         public ApiClient(IHttpClientFactory httpClientFactory, IConfiguration configuration, ILogger<ApiClient> log)
         {
-            appConfig = configuration.GetSection("HealthData");
+            appConfig = configuration.GetSection("HealthDataRepository");
             discoveryCache = new DiscoveryCache(appConfig.GetValue<string>("GatekeeperUrl"));
             client = httpClientFactory.CreateClient("apiclient");
             logger = log;
