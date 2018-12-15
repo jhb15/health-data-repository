@@ -1,4 +1,5 @@
-﻿using Hangfire;
+﻿using AberFitnessAuditLogger;
+using Hangfire;
 using Hangfire.MySql;
 using HealthDataRepository.Models;
 using HealthDataRepository.Repositories;
@@ -34,7 +35,7 @@ namespace HealthDataRepository
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            var appConfiguration = Configuration.GetSection("HealthData");
+            var appConfiguration = Configuration.GetSection("HealthDataRepository");
             var connectionString = Configuration.GetConnectionString("HealthDataRepositoryContext");
 
             services.AddHttpClient("apiclient", client =>
@@ -45,6 +46,7 @@ namespace HealthDataRepository
             services.AddScoped<IActivityRepository, ActivityRepository>();
             services.AddScoped<IActivityTypeRepository, ActivityTypeRepository>();
             services.AddScoped<IEmailRecordRepository, EmailRecordRepository>();
+            services.AddScoped<IAuditLogger, AuditLogger>(); 
             services.AddSingleton<IApiClient, ApiClient>();
 
             services.Configure<CookiePolicyOptions>(options =>
